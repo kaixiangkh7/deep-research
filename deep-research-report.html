@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is Apple a Good Stock to Buy?</title>
+<style>
+/* ── Reset & base ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0f172a;
+  --bg2:#1e293b;
+  --bg3:#0b1221;
+  --surface:#162032;
+  --border:#2d3f55;
+  --text:#f1f5f9;
+  --text2:#94a3b8;
+  --text3:#64748b;
+  --em:#10b981;  /* emerald-500 */
+  --em-dim:#059669;
+  --em-fade:rgba(16,185,129,0.15);
+  --blue:#60a5fa;
+  --blue-dim:#3b82f6;
+  --blue-fade:rgba(96,165,250,0.15);
+  --yellow:#fde047;
+  --yellow-bg:#854d0e;
+  --indigo:#818cf8;
+  --indigo-fade:rgba(129,140,248,0.12);
+  --radius:8px;
+  --shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+
+[data-theme="light"]{
+  --bg:#f8fafc;
+  --bg2:#e2e8f0;
+  --bg3:#f1f5f9;
+  --surface:#ffffff;
+  --border:#cbd5e1;
+  --text:#0f172a;
+  --text2:#475569;
+  --text3:#94a3b8;
+  --em:#047857;
+  --em-dim:#059669;
+  --em-fade:rgba(4,120,87,0.1);
+  --blue:#1d4ed8;
+  --blue-dim:#2563eb;
+  --blue-fade:rgba(29,78,216,0.1);
+  --yellow:#92400e;
+  --yellow-bg:#fef08a;
+  --indigo:#4338ca;
+  --indigo-fade:rgba(67,56,202,0.08);
+  --shadow:0 4px 24px rgba(0,0,0,0.1);
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;
+  line-height:1.7;
+  min-height:100vh;
+}
+
+/* ── Custom scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--text3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--text2)}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.page-wrapper{max-width:860px;margin:0 auto;padding:2rem 1.5rem 6rem}
+
+/* ── Header ───────────────────────────────────────────────── */
+.report-header{
+  border-bottom:1px solid var(--border);
+  padding-bottom:1.5rem;
+  margin-bottom:2.5rem;
+}
+.report-header-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.75rem;
+}
+.report-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.65rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--em);
+  background:var(--em-fade);
+  border:1px solid rgba(16,185,129,.25);
+  padding:.25rem .6rem;
+  border-radius:20px;
+  margin-bottom:.75rem;
+}
+.report-title{
+  font-size:1.75rem;
+  font-weight:700;
+  color:var(--text);
+  line-height:1.3;
+}
+.report-meta{
+  font-size:.8rem;
+  color:var(--text3);
+  display:flex;
+  flex-wrap:wrap;
+  gap:1rem;
+  margin-top:.5rem;
+}
+.report-meta span{display:flex;align-items:center;gap:.3rem}
+
+/* ── Theme toggle ─────────────────────────────────────────── */
+.theme-btn{
+  flex-shrink:0;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  color:var(--text2);
+  border-radius:var(--radius);
+  padding:.4rem .75rem;
+  font-size:.75rem;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  transition:all .15s;
+  white-space:nowrap;
+}
+.theme-btn:hover{border-color:var(--text3);color:var(--text)}
+.theme-icon-dark,.theme-icon-light{display:none}
+[data-theme="dark"] .theme-icon-dark{display:inline}
+[data-theme="light"] .theme-icon-light{display:inline}
+
+/* ── Report body typography ───────────────────────────────── */
+#report h1{font-size:1.4rem;font-weight:700;margin:2rem 0 .75rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:.5rem}
+#report h2{font-size:1.2rem;font-weight:600;margin:1.75rem 0 .6rem;color:var(--text)}
+#report h3{font-size:1rem;font-weight:600;margin:1.5rem 0 .5rem;color:var(--text2)}
+#report p{margin:.6rem 0 1rem}
+#report ul,#report ol{padding-left:1.5rem;margin:.5rem 0 1rem}
+#report li{margin:.3rem 0}
+#report strong{color:var(--text);font-weight:600}
+#report em{color:var(--text2)}
+#report hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+#report blockquote{
+  border-left:3px solid var(--em);
+  padding:.75rem 1rem;
+  margin:1rem 0;
+  background:var(--em-fade);
+  border-radius:0 var(--radius) var(--radius) 0;
+  color:var(--text2);
+  font-style:italic;
+}
+#report code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  font-size:.85em;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  padding:.1em .35em;
+  border-radius:4px;
+  color:var(--em);
+}
+#report pre{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1rem;
+  overflow-x:auto;
+  margin:1rem 0;
+}
+#report pre code{background:none;border:none;padding:0;color:var(--text2)}
+#report table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9rem}
+#report th{background:var(--bg2);color:var(--text2);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;padding:.6rem 1rem;border-bottom:1px solid var(--border);text-align:left}
+#report td{padding:.6rem 1rem;border-bottom:1px solid var(--border);color:var(--text2)}
+#report tr:hover td{background:var(--surface)}
+
+/* ── Citation chips ───────────────────────────────────────── */
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.2rem;
+  cursor:pointer;
+  border-radius:3px;
+  padding:0 2px;
+  margin:0 1px;
+  font-weight:500;
+  transition:background .15s,color .15s;
+  position:relative;
+}
+.chip-file{
+  color:var(--em);
+  border-bottom:1.5px dashed var(--em-dim);
+}
+.chip-file:hover{background:var(--em-fade);color:var(--text)}
+.chip-web{
+  color:var(--blue);
+  border-bottom:1.5px dashed var(--blue-dim);
+  text-decoration:none;
+}
+.chip-web:hover{background:var(--blue-fade);color:var(--text)}
+.chip svg{opacity:.55;flex-shrink:0;transition:opacity .15s}
+.chip:hover svg{opacity:1}
+
+/* ── Sources section ──────────────────────────────────────── */
+.sources-section{
+  margin-top:3rem;
+  padding-top:1.5rem;
+  border-top:2px solid var(--border);
+}
+.sources-section h2{
+  font-size:1rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  color:var(--text3);
+  margin-bottom:1.25rem;
+}
+.source-item{
+  display:flex;
+  gap:.75rem;
+  padding:.75rem 0;
+  border-bottom:1px solid var(--border);
+  font-size:.85rem;
+}
+.source-num{
+  color:var(--text3);
+  font-weight:700;
+  font-size:.75rem;
+  min-width:1.4rem;
+  margin-top:.1rem;
+}
+.source-body{flex:1}
+.source-ref{
+  cursor:pointer;
+  font-weight:600;
+  color:var(--text);
+  word-break:break-all;
+}
+.source-ref:hover{color:var(--em)}
+.source-ref.is-url{color:var(--blue)}
+.source-ref.is-url:hover{color:var(--blue-dim)}
+.source-page{color:var(--text3);font-size:.75rem;margin:.2rem 0}
+.source-quote{
+  color:var(--text2);
+  font-style:italic;
+  font-size:.8rem;
+  margin-top:.3rem;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+/* ── Sidebar backdrop ─────────────────────────────────────── */
+#sidebar-backdrop{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(2,6,23,.8);
+  backdrop-filter:blur(4px);
+  z-index:100;
+}
+#sidebar-backdrop.open{display:block}
+
+/* ── Source sidebar ───────────────────────────────────────── */
+#source-sidebar{
+  position:fixed;top:0;right:0;
+  height:100%;width:100%;
+  max-width:600px;
+  background:var(--bg2);
+  border-left:1px solid var(--border);
+  box-shadow:var(--shadow);
+  z-index:101;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+#source-sidebar.open{transform:translateX(0)}
+
+.sidebar-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+  flex-shrink:0;
+}
+.sidebar-header-left h2{
+  font-size:1rem;font-weight:700;
+  display:flex;align-items:center;gap:.5rem;color:var(--text);
+}
+.sidebar-header-left p{font-size:.75rem;color:var(--text3);margin-top:.2rem}
+.sidebar-close{
+  background:none;border:none;
+  color:var(--text3);cursor:pointer;
+  border-radius:50%;padding:.4rem;
+  display:flex;align-items:center;
+  transition:background .15s,color .15s;
+}
+.sidebar-close:hover{background:var(--bg);color:var(--text)}
+
+.sidebar-body{flex:1;overflow-y:auto;padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+
+/* Metadata card */
+.meta-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1rem 1.1rem;
+  display:flex;flex-direction:column;gap:.75rem;
+}
+.meta-card-top{display:flex;align-items:center;gap:.85rem}
+.meta-icon{
+  padding:.65rem;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.meta-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:700;margin-bottom:.2rem}
+.meta-source-name{font-size:.9rem;font-weight:600;color:var(--text);word-break:break-all}
+.meta-source-name a{color:var(--blue);text-decoration:underline;word-break:break-all}
+.meta-source-name a:hover{color:var(--blue-dim)}
+.meta-page{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.78rem;color:var(--text2);
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:.35rem .75rem;
+}
+.meta-page-label{color:var(--text3);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.meta-page-val{color:var(--em);font-family:ui-monospace,monospace;font-size:.8rem}
+
+/* Logic block */
+.logic-block{
+  background:var(--indigo-fade);
+  border:1px solid rgba(129,140,248,.25);
+  border-radius:var(--radius);
+  padding:.9rem 1rem;
+}
+.logic-block-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.logic-icon{padding:.3rem;background:rgba(129,140,248,.15);border:1px solid rgba(129,140,248,.3);border-radius:5px;display:flex;align-items:center}
+.logic-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--indigo)}
+.logic-text{font-size:.82rem;color:var(--indigo);font-family:ui-monospace,monospace;background:rgba(0,0,0,.2);padding:.5rem .7rem;border-radius:5px;border:1px solid rgba(255,255,255,.05)}
+
+/* Paper excerpt */
+.paper-wrapper{position:relative;padding-top:.9rem}
+.paper-tab{
+  position:absolute;top:0;left:1rem;
+  background:var(--em);color:#fff;
+  font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  padding:.2rem .5rem .2rem .4rem;
+  border-radius:4px 4px 0 0;
+  display:flex;align-items:center;gap:.3rem;
+  z-index:1;
+}
+.paper{
+  background:#fff;color:#1e293b;
+  border-radius:8px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  overflow:hidden;
+  min-height:200px;
+}
+.paper-topbar{height:6px;background:#e2e8f0}
+.paper-content{
+  padding:2rem 2.25rem;
+  font-family:Georgia,Cambria,"Times New Roman",Times,serif;
+  font-size:1rem;line-height:1.9;color:#334155;
+}
+.paper-content::before,.paper-content::after{display:block;content:"";width:3rem;height:3px;background:#e2e8f0;margin-bottom:1.25rem}
+.paper-content::after{width:6rem;margin-top:1.25rem;margin-bottom:0}
+.paper-foot{
+  background:#f8fafc;border-top:1px solid #e2e8f0;
+  padding:.5rem 1rem;
+  display:flex;justify-content:space-between;
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;
+}
+.paper-note{text-align:center;font-size:.7rem;color:var(--text3);margin-top:.6rem}
+
+/* Quote highlight */
+.hl{
+  background:#fde047;color:#1e293b;
+  font-weight:700;
+  padding:.05em .2em;
+  border-radius:2px;
+  border-bottom:2px solid #854d0e;
+  box-shadow:0 1px 2px rgba(0,0,0,.2);
+}
+
+/* Empty state */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:1rem;color:var(--text3);
+  text-align:center;padding:2rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media(max-width:640px){
+  #source-sidebar{max-width:100%}
+  .page-wrapper{padding:1.25rem 1rem 5rem}
+  .report-title{font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ── MAIN CONTENT ─────────────────────────────────────── -->
+<div class="page-wrapper">
+
+  <header class="report-header">
+    <div class="report-header-top">
+      <div>
+        <div class="report-badge">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Grounded Research Report
+        </div>
+        <h1 class="report-title">Is Apple a Good Stock to Buy?</h1>
+        <div class="report-meta"><span>📅 2026-06-03</span><span>📋 1 SEC filing (10-Q)</span><span>🌐 22 web sources</span></div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">
+        <span class="theme-icon-dark">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          Light
+        </span>
+        <span class="theme-icon-light">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Report body -->
+  <article id="report">
+
+<p>Apple (AAPL) is a <strong>conditionally attractive investment</strong> — exceptional business fundamentals, a credible AI growth thesis, and dominant ecosystem lock-in are offset by a historically stretched valuation, material China and tariff exposure, and an AI execution test that culminates at WWDC on June 8, 2026. As of June 3, 2026, the stock trades at $310.26 with a $4.5 trillion market cap and a Wall Street consensus "Buy" rating, but the average analyst price target of $310.51 implies virtually zero near-term upside at current prices. Whether Apple is a good buy depends heavily on your investment horizon, risk tolerance, and conviction in the AI narrative.</p>
+
+<h2>Primary Source: SEC Form 10-Q (Q2 FY2026)</h2>
+
+<p>The authoritative primary source for Apple's financials is its Form 10-Q filed with the SEC on May 1, 2026 for the quarter ended March 28, 2026
+<claim source="https://www.sec.gov/Archives/edgar/data/0000320193/000032019326000013/aapl-20260328.htm" quote="aapl-20260328.htm" page="SEC EDGAR — Apple Inc. Form 10-Q, filed May 1, 2026" context="Apple Inc. Form 10-Q for the fiscal quarter ended March 28, 2026. Filed with the SEC on May 1, 2026. CIK: 0000320193.">(SEC EDGAR: CIK 0000320193, filing date May 1, 2026)</claim>.
+The filing is also available as an
+<claim source="https://s2.q4cdn.com/470004039/files/doc_earnings/2026/q2/filing/10Q-Q2-2026-as-filed.pdf" quote="10Q-Q2-2026-as-filed.pdf" page="Apple Inc. 10-Q Q2 FY2026 — as-filed PDF" context="Apple Inc. Form 10-Q for the quarter ended March 28, 2026 — as-filed PDF via q4cdn.">as-filed PDF</claim>
+and verified through
+<claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Total net sales $111,184" page="StockTitan — Apple 10-Q Q2 FY2026 mirror, May 1, 2026" context="Apple Q2 2026 revenue jumps 17% on iPhone, Services — AAPL Quarterly Report (10-Q) via StockTitan. Total net sales $111,184 million for three months ended March 28, 2026.">StockTitan's SEC filing mirror</claim>.</p>
+
+<h3>Income Statement (Condensed Consolidated Statements of Operations)</h3>
+<p>The 10-Q's Condensed Consolidated Statements of Operations record the following for the <strong>three months ended March 28, 2026</strong> (Q2 FY2026) vs. the year-ago period (three months ended March 29, 2025):</p>
+<ul>
+  <li><strong>Total net sales:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Total net sales $111,184" page="Condensed Consolidated Statements of Operations — Three Months Ended" context="Total net sales $111,184 (Q2 FY2026) vs. $95,359 (Q2 FY2025). Products: $80,208M vs $68,714M. Services: $30,976M vs $26,645M.">$111,184 million vs. $95,359 million</claim>
+    (+17% YoY). Products: $80,208M vs $68,714M; Services: $30,976M vs $26,645M.</li>
+  <li><strong>Net income:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Net income: $29,578M vs $24,780M" page="Condensed Consolidated Statements of Operations — Three Months Ended" context="Net income $29,578 million (Q2 FY2026) vs. $24,780 million (Q2 FY2025).">$29,578 million vs. $24,780 million</claim>
+    (+19% YoY).</li>
+  <li><strong>Diluted EPS:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Diluted EPS: $2.01 vs $1.65" page="Condensed Consolidated Statements of Operations — Three Months Ended" context="Diluted earnings per share: $2.01 (Q2 FY2026) vs. $1.65 (Q2 FY2025).">$2.01 vs. $1.65</claim>
+    (+22% YoY).</li>
+  <li><strong>Gross margin:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Total gross margin percentage 49.3%" page="MD&amp;A — Gross Margin discussion" context="Total gross margin: $54,781M (49.3%) vs $44,867M (47.1%). Products gross margin: 38.7%. Services gross margin: 76.7%.">$54,781 million (49.3%) vs. $44,867 million (47.1%)</claim>.
+    Products margin 38.7%; Services margin 76.7%.</li>
+  <li><strong>Six-month cumulative net sales:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Six Months Ended March 28, 2026 vs March 29, 2025: Total net sales: $254,940M vs $219,659M" page="Condensed Consolidated Statements of Operations — Six Months Ended" context="Six months ended March 28, 2026 vs March 29, 2025: Total net sales: $254,940M vs $219,659M. Net income: $71,675M vs $61,110M. Diluted EPS: $4.85 vs $4.05.">$254,940 million vs. $219,659 million</claim>,
+    with net income of $71,675M vs $61,110M and diluted EPS of $4.85 vs $4.05.</li>
+</ul>
+
+<h3>Balance Sheet (as of March 28, 2026)</h3>
+<ul>
+  <li><strong>Cash and cash equivalents:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Cash and cash equivalents: $45,572M / Marketable securities (current): $22,935M / Marketable securities (non-current): $78,088M" page="Condensed Consolidated Balance Sheets (Unaudited) as of March 28, 2026" context="Cash and cash equivalents: $45,572 million. Marketable securities (current): $22,935 million. Marketable securities (non-current): $78,088 million. Total: ~$146,595 million.">$45,572M cash + $22,935M current securities + $78,088M non-current securities ≈ $146.6 billion total</claim>.</li>
+  <li><strong>Total term debt:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Term debt (current): $8,310M / Term debt (non-current): $74,404M / Total term debt outstanding: $82,700M" page="Condensed Consolidated Balance Sheets; Note on Debt" context="Term debt (current): $8,310 million. Term debt (non-current): $74,404 million. Total outstanding fixed-rate notes: $82,700 million.">$8,310M current + $74,404M non-current = $82,714M outstanding</claim>.</li>
+</ul>
+
+<h3>Cash Flow Statement (Six Months Ended March 28, 2026)</h3>
+<ul>
+  <li><strong>Operating cash flow:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Cash generated by operating activities $82,627" page="Condensed Consolidated Statements of Cash Flows (Unaudited) — Six Months Ended March 28, 2026" context="Cash generated by operating activities: $82,627 million for the six months ended March 28, 2026.">$82,627 million</claim>
+    in the first two quarters of FY2026 — an annualised rate exceeding $160 billion.</li>
+  <li><strong>Share repurchases:</strong>
+    <claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-8c3913d3d431.html" quote="Repurchases of common stock $36,989" page="Condensed Consolidated Statements of Cash Flows (Unaudited) — Six Months Ended March 28, 2026" context="Repurchases of common stock: $36,989 million for the six months ended March 28, 2026.">$36,989 million of common stock repurchased</claim>
+    in the first half of FY2026 alone, before the additional $100B authorization.</li>
+</ul>
+
+<h3>MD&amp;A: Tariff Risk Factor (verbatim)</h3>
+<p>Apple's own Management Discussion &amp; Analysis section carries this verbatim risk disclosure on tariffs:</p>
+<blockquote>
+<claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-d498ae47d743.html" quote="Tariffs and other measures that are applied to the Company's products or their components can have a material adverse impact on the Company's business, results of operations and financial condition, including impacting the Company's supply chain, the availability of rare earths and other raw materials and components, pricing and gross margin." page="MD&amp;A — Tariffs and Other Measures, Apple Q1 2026 10-Q" context="Tariffs and other measures that are applied to the Company's products or their components can have a material adverse impact on the Company's business, results of operations and financial condition, including impacting the Company's supply chain, the availability of rare earths and other raw materials and components, pricing and gross margin.">"Tariffs and other measures that are applied to the Company's products or their components can have a material adverse impact on the Company's business, results of operations and financial condition, including impacting the Company's supply chain, the availability of rare earths and other raw materials and components, pricing and gross margin."</claim>
+</blockquote>
+<p>The filing further specifies the scope of new tariff actions:</p>
+<blockquote>
+<claim source="https://www.stocktitan.net/sec-filings/AAPL/10-q-apple-inc-quarterly-earnings-report-d498ae47d743.html" quote="Beginning in the second quarter of 2025, new tariffs were announced on imports to the U.S., including additional tariffs on imports from China, India, Japan, South Korea, Taiwan, Vietnam and the European Union ('EU'), among others." page="MD&amp;A — Tariffs and Other Measures, Apple Q1 2026 10-Q" context="Beginning in the second quarter of 2025, new tariffs were announced on imports to the U.S., including additional tariffs on imports from China, India, Japan, South Korea, Taiwan, Vietnam and the European Union ('EU'), among others. In response, several countries have imposed, or threatened to impose, reciprocal tariffs on imports from the U.S. and other retaliatory measures.">"Beginning in the second quarter of 2025, new tariffs were announced on imports to the U.S., including additional tariffs on imports from China, India, Japan, South Korea, Taiwan, Vietnam and the European Union ('EU'), among others. In response, several countries have imposed, or threatened to impose, reciprocal tariffs on imports from the U.S. and other retaliatory measures."</claim>
+</blockquote>
+
+<h3>Legal Proceedings: EU Digital Markets Act (verbatim)</h3>
+<p>Under Part II, Item 1 — Legal Proceedings, the 10-Q discloses:</p>
+<blockquote>
+<claim source="https://www.sec.gov/Archives/edgar/data/0000320193/000032019326000013/aapl-20260328.htm" quote="On March 25, 2024, the European Commission ('Commission') announced that it had opened a formal noncompliance investigation against the Company under Article 5(4) of the EU Digital Markets Act ('DMA') ('Article 5(4) Investigation')." page="Part II, Item 1 — Legal Proceedings, Apple 10-Q Q2 FY2026" context="On March 25, 2024, the European Commission ('Commission') announced that it had opened a formal noncompliance investigation against the Company under Article 5(4) of the EU Digital Markets Act ('DMA') ('Article 5(4) Investigation').">"On March 25, 2024, the European Commission ('Commission') announced that it had opened a formal noncompliance investigation against the Company under Article 5(4) of the EU Digital Markets Act ('DMA') ('Article 5(4) Investigation')."</claim>
+</blockquote>
+
+<h3>Greater China MD&amp;A (verbatim)</h3>
+<p>The 10-Q's geographic segment discussion confirms the Q2 FY2026 China recovery:</p>
+<blockquote>
+<claim source="https://www.sec.gov/Archives/edgar/data/0000320193/000032019326000013/aapl-20260328.htm" quote="Greater China net sales increased during the second quarter...of 2026 compared to the same periods in 2025 due to higher net sales of iPhone. The strength in the renminbi relative to the U.S. dollar had a favorable year-over-year impact on Greater China net sales during the second quarter of 2026." page="MD&amp;A — Geographic Segment Results, Apple 10-Q Q2 FY2026" context="Greater China net sales increased during the second quarter of 2026 compared to the same periods in 2025 due to higher net sales of iPhone. The strength in the renminbi relative to the U.S. dollar had a favorable year-over-year impact on Greater China net sales during the second quarter of 2026.">"Greater China net sales increased during the second quarter of 2026 compared to the same periods in 2025 due to higher net sales of iPhone. The strength in the renminbi relative to the U.S. dollar had a favorable year-over-year impact on Greater China net sales during the second quarter of 2026."</claim>
+</blockquote>
+
+<hr>
+
+<h2>Recent Financial Performance</h2>
+
+<p>Apple's operating momentum is strong and accelerating. In its most recent quarter (Q2 FY2026, ended March 28, 2026), Apple reported
+<claim source="https://www.apple.com/newsroom/2026/04/apple-reports-second-quarter-results/" quote="Today Apple is proud to report our best March quarter ever, with revenue of $111.2 billion and double-digit growth across every geographic segment." page="Apple Newsroom, April 30, 2026" context="Today Apple is proud to report our best March quarter ever, with revenue of $111.2 billion and double-digit growth across every geographic segment. — Tim Cook, CEO">revenue of $111.2 billion, up 17% year-over-year</claim>,
+its best March quarter ever. Diluted EPS reached
+<claim source="https://www.macrumors.com/2026/04/30/apple-2q-2026-earnings/" quote="Diluted EPS: $2.01 (vs. $1.65 in Q2 2025)" page="MacRumors, April 30, 2026" context="Net Income: $29.6 billion. Diluted EPS: $2.01 (vs. $1.65 in Q2 2025). Gross Margin (Overall): 49.3%">$2.01, up 22% from $1.65 in Q2 2025</claim>,
+with an overall gross margin of
+<claim source="https://www.macrumors.com/2026/04/30/apple-2q-2026-earnings/" quote="Gross Margin (Overall): 49.3%" page="MacRumors, April 30, 2026" context="Gross Margin (Overall): 49.3%. Products Gross Margin: 38.7%. Services Gross Margin: 76.7%">49.3%</claim>.
+The Services segment hit an all-time high of
+<claim source="https://earningscall.biz/blog/apple-q2-2026-earnings-call" quote="Services revenue reached an all-time high of $31 billion, up 16% year-over-year" page="EarningsCall.biz, April 30, 2026" context="Services revenue reached an all-time high of $31 billion, up 16% year-over-year — Kevan Parekh, CFO">$31 billion, up 16% year-over-year</claim>,
+with a
+<claim source="https://www.macrumors.com/2026/04/30/apple-2q-2026-earnings/" quote="Services Gross Margin: 76.7%" page="MacRumors, April 30, 2026" context="Services Gross Margin: 76.7%">Services gross margin of 76.7%</claim>.</p>
+
+<p>For the full fiscal year 2025, Apple posted
+<claim source="https://www.macrumors.com/2025/10/30/apple-4q-2025-earnings/" quote="Full Year FY2025 Revenue: $416.2 billion" page="MacRumors, October 30, 2025" context="Full Year FY2025 Revenue: $416.2 billion. Full Year FY2025 Net Income: $112.0 billion. Full Year FY2025 Services Revenue: Passed $100 billion for the year, up 14%">revenue of $416.2 billion with net income of $112 billion</claim>,
+with Services crossing the
+<claim source="https://www.macrumors.com/2025/10/30/apple-4q-2025-earnings/" quote="Full Year FY2025 Services Revenue: Passed $100 billion for the year, up 14%" page="MacRumors, October 30, 2025" context="Full Year FY2025 Services Revenue: Passed $100 billion for the year, up 14%">$100 billion annual revenue milestone for the first time, up 14%</claim>.
+The company's balance sheet is robust, with a
+<claim source="https://www.macrumors.com/2026/04/30/apple-2q-2026-earnings/" quote="Net Cash Position: $62 billion" page="MacRumors, April 30, 2026" context="Cash &amp; Marketable Securities (Total): $147 billion. Total Debt: $85 billion. Net Cash Position: $62 billion">net cash position of $62 billion</claim>
+and a fresh
+<claim source="https://earningscall.biz/blog/apple-q2-2026-earnings-call" quote="New $100 billion share buyback program announced; dividend raised 4% to $0.27/share" page="EarningsCall.biz, April 30, 2026" context="New $100 billion share buyback program announced; dividend raised 4% to $0.27/share">$100 billion share buyback authorization and 4% dividend increase</claim>.
+For Q3 FY2026, management guided for
+<claim source="https://earningscall.biz/blog/apple-q2-2026-earnings-call" quote="Q3 FY2026 guidance of 14–17% year-over-year revenue growth" page="EarningsCall.biz, April 30, 2026" context="Q3 FY2026 guidance of 14–17% year-over-year revenue growth (up to ~$110 billion), significantly exceeding analyst expectations of 9–10%">14–17% year-over-year revenue growth, significantly ahead of analyst expectations of 9–10%</claim>.</p>
+
+<h2>Analyst Consensus and Price Targets</h2>
+
+<p>Wall Street is broadly bullish on Apple. Based on
+<claim source="https://stockanalysis.com/stocks/aapl/forecast/" quote="Strong Buy: 23 | Buy: 7 | Hold: 15 | Sell: 2 | Strong Sell: 1" page="StockAnalysis.com, June 2026" context="Consensus rating: Buy, based on 48 analysts polled by S&amp;P Global. Strong Buy: 23 | Buy: 7 | Hold: 15 | Sell: 2 | Strong Sell: 1">48 analysts polled by S&amp;P Global — 23 Strong Buy, 7 Buy, 15 Hold, 2 Sell, 1 Strong Sell — the consensus rating is Buy</claim>
+with an average price target of
+<claim source="https://stockanalysis.com/stocks/aapl/forecast/" quote="Average: $310.51 (+0.08%)" page="StockAnalysis.com, June 2026" context="Average: $310.51 (+0.08%) / Low: $215 (-30.70%) / High: $400 (+28.92%)">$310.51, implying essentially flat upside from the current price</claim>.</p>
+
+<p>The most bullish voice is Wedbush's Daniel Ives, who raised his target to $400 in May 2026, calling Apple
+<claim source="https://247wallst.com/investing/2026/05/08/wedbush-hikes-apple-price-target-to-400-ai-inflection-point-could-reach-20-of-the-world/" quote="The sleeping tech giant about to see a major inflection point." page="247WallSt.com, May 8, 2026" context="Wedbush analyst Daniel Ives raised price target from $350 to $400. The sleeping tech giant about to see a major inflection point.">"the sleeping tech giant about to see a major inflection point"</claim>
+and projecting that
+<claim source="https://247wallst.com/investing/2026/05/08/wedbush-hikes-apple-price-target-to-400-ai-inflection-point-could-reach-20-of-the-world/" quote="roughly 20% of the world's population will access AI through an Apple device over the coming years" page="247WallSt.com, May 8, 2026" context="roughly 20% of the world's population will access AI through an Apple device over the coming years — Dan Ives, Wedbush">roughly 20% of the world's population will access AI through an Apple device over coming years</claim>.
+Bank of America's Wamsi Mohan (target: $380) argues that
+<claim source="https://www.foreignpolicyjournal.com/2026/05/30/why-bank-of-america-raised-its-apple-nasdaq-aapl-price-target/" quote="Apple does not need to win the artificial intelligence model competition to come out ahead in the next phase of AI development." page="Foreign Policy Journal, May 30, 2026" context="Apple does not need to win the artificial intelligence model competition to come out ahead in the next phase of AI development. — Wamsi Mohan, Bank of America">"Apple does not need to win the artificial intelligence model competition to come out ahead in the next phase of AI development."</claim>
+Morgan Stanley's Erik Woodring (target: $330, bull case: $440) identified WWDC 2026 as a
+<claim source="https://finance.yahoo.com/markets/stocks/articles/apple-wwdc-2026-key-catalyst-233816532.html" quote="WWDC 2026 could be a key catalyst for Apple stock, potentially reframing the company as an 'AI winner'" page="Yahoo Finance / Morgan Stanley, June 1, 2026" context="WWDC 2026 could be a key catalyst for Apple stock, potentially reframing the company as an 'AI winner'. Low investor expectations create a favorable setup for a narrative re-rating. — Erik Woodring, Morgan Stanley">"key catalyst for Apple stock, potentially reframing the company as an 'AI winner'"</claim>
+with the bull-case path to $440 contingent on a polished AI platform announcement.</p>
+
+<p>The most notable bear on the street is Barclays analyst Tim Long, who maintains an Underweight rating with a $253 target, citing ongoing uncertainty in the AI strategy and margin risk.
+<claim source="https://www.investing.com/news/analyst-ratings/barclays-raises-apple-stock-price-target-to-253-on-revenue-outlook-93CH-4652130" quote="The firm said it remains cautious given uncertainty around rising costs and an unclear AI strategy." page="Investing.com, May 1, 2026" context="Barclays analyst Tim Long raised target from $248 to $253; Rating: Underweight. The March quarter gross margin came in at 49.3%, above the firm's estimate of 47.8%. The firm said it remains cautious given uncertainty around rising costs and an unclear AI strategy.">Long stated: "The firm said it remains cautious given uncertainty around rising costs and an unclear AI strategy."</claim></p>
+
+<h2>Growth Drivers</h2>
+
+<h3>Apple Intelligence and AI</h3>
+<p>Apple's AI platform — Apple Intelligence — is gaining adoption rapidly.
+<claim source="https://tech-insider.org/apple-q2-2026-earnings-111-billion-revenue-17-surge/" quote="more than 80% of Apple Silicon-eligible devices have now activated Apple Intelligence features" page="Tech Insider, April 30, 2026" context="more than 80% of Apple Silicon-eligible devices have now activated Apple Intelligence features. Private Cloud Compute runs on 40,000+ Apple Silicon servers across three U.S. data centers.">More than 80% of Apple Silicon-eligible devices have now activated Apple Intelligence features</claim>.
+Apple's partnership with Google, struck in January 2026, powers a rebuilt Siri with Gemini. The
+<claim source="https://techcrunch.com/2026/01/12/googles-gemini-to-power-apples-ai-features-like-siri/" quote="After careful evaluation, we determined that Google's technology provides the most capable foundation for Apple Foundation Models and we're excited about the innovative new experiences it will unlock for our users." page="TechCrunch, January 12, 2026" context="Joint Apple-Google statement: After careful evaluation, we determined that Google's technology provides the most capable foundation for Apple Foundation Models and we're excited about the innovative new experiences it will unlock for our users.">joint statement read: "After careful evaluation, we determined that Google's technology provides the most capable foundation for Apple Foundation Models."</claim>
+The rebuilt Siri is expected to debut in iOS 27 in September 2026 following its WWDC unveiling on June 8. Wedbush projects
+<claim source="https://www.fool.com/investing/2026/05/08/is-apple-stock-headed-to-400-1-analyst-says-apple/" quote="$15 billion in additional annual services revenue from AI-driven subscriptions" page="The Motley Fool, May 8, 2026" context="Dan Ives expected Apple's WWDC 2026 developer conference in June to serve as a significant catalyst, with potential for $15 billion in additional annual services revenue from AI-driven subscriptions">$15 billion in additional annual services revenue from AI-driven subscriptions</claim>
+as AI monetization matures.</p>
+
+<h3>Services Flywheel</h3>
+<p>Services is Apple's most valuable growth engine. Apple now has
+<claim source="https://tech-insider.org/apple-q2-2026-earnings-111-billion-revenue-17-surge/" quote="Apple surpassed 1.1 billion paid subscriptions" page="Tech Insider, April 30, 2026" context="Apple surpassed 1.1 billion paid subscriptions. Apple Music crossed 110 million paid subscribers. Services gross margins exceeding 75%, representing 27.9% of total revenue">over 1.1 billion paid subscriptions</claim>
+across its platform, with
+<claim source="https://applemagazine.com/apple-services-growth-2025" quote="The App Store alone reached more than 850 million average weekly users globally" page="AppleMagazine, April 29, 2026" context="The App Store alone reached more than 850 million average weekly users globally, while developers have earned more than $550 billion through the platform since 2008. Services represented more than a quarter of the company's annual revenue.">the App Store alone drawing more than 850 million average weekly users globally</claim>.
+The installed base underpinning this ecosystem stands at
+<claim source="https://applemagazine.com/apple-services-growth-2025" quote="Apple said it had more than 2.5 billion active devices as of the first quarter of fiscal 2026." page="AppleMagazine, April 29, 2026" context="Apple said it had more than 2.5 billion active devices as of the first quarter of fiscal 2026.">more than 2.5 billion active devices</claim>.
+Services gross margins of 76.7% dwarf the 38.7% margins on Apple's physical products, making every incremental Services dollar extremely valuable.</p>
+
+<h3>India Manufacturing and Market Expansion</h3>
+<p>India has become a critical pillar of Apple's supply chain and growth story.
+<claim source="https://finance.yahoo.com/news/apple-iphone-production-india-hits-160649197.html" quote="Apple assembled 55 million iPhones in India during 2025, a 53% jump from the previous year" page="Yahoo Finance, March 12, 2026" context="Apple assembled 55 million iPhones in India during 2025, a 53% jump from the previous year. India now represents a quarter of the company's global production.">Apple assembled 55 million iPhones in India in 2025, a 53% jump, and India now represents 25% of global iPhone production</claim>.
+Tim Cook has expressed extraordinary enthusiasm:
+<claim source="https://www.alphaspread.com/security/nasdaq/aapl/investor-relations/earnings-call/q2-2026" quote="I'm over the moon excited about India" page="AlphaSpread / Apple Q2 2026 Earnings Call, April 30, 2026" context="Tim Cook: India is the second largest smartphone market in the world and the third largest PC market. I'm over the moon excited about India. The majority of customers in all of our categories are new to that product there.">"I'm over the moon excited about India."</claim>
+India serves simultaneously as a manufacturing hedge against China tariff risk and a massive untapped consumer market where, Cook notes, the majority of buyers are new to Apple products.</p>
+
+<h2>Key Investment Risks</h2>
+
+<h3>China and Tariff Exposure</h3>
+<p>China represents Apple's single largest geographic risk. In Q2 FY2026, Greater China contributed $20.5 billion in revenue — but the path has been volatile. Earlier in FY2025,
+<claim source="https://techcrunch.com/2025/01/30/apple-quarterly-revenue-increases-even-as-china-sales-decline-11/" quote="China revenue dropped to $18.51 billion in fiscal Q1 2025, an 11.1% decline year-over-year" page="TechCrunch, January 30, 2025" context="China revenue dropped to $18.51 billion in fiscal Q1 2025, an 11.1% decline year-over-year — the largest drop in the region since a nearly 13% dip in Q1 2024.">China revenue fell 11.1% year-over-year in Q1 FY2025</claim>,
+the steepest decline since 2023, partly because Apple Intelligence was blocked in mainland China pending regulatory approval. With
+<claim source="https://capital.com/en-int/market-updates/apple-stock-forecast-02-04-2026" quote="approximately 90% of iPhones are assembled in China" page="Capital.com, April 2, 2026" context="approximately 90% of iPhones are assembled in China. Potential iPhone price impact: retail prices could jump from $1,199 to around $2,150 if tariffs are passed on fully to consumers. Morgan Stanley estimated tariffs could raise Apple's annual costs by around $8.5bn.">approximately 90% of iPhones still assembled in China</claim>,
+tariffs could cost Apple
+<claim source="https://capital.com/en-int/market-updates/apple-stock-forecast-02-04-2026" quote="Morgan Stanley estimated tariffs could raise Apple's annual costs by around $8.5bn" page="Capital.com, April 2, 2026" context="Morgan Stanley estimated tariffs could raise Apple's annual costs by around $8.5bn. Potential iPhone price impact: retail prices could jump from $1,199 to around $2,150 if tariffs are passed on fully to consumers.">an estimated $8.5 billion per year (Morgan Stanley estimate)</claim>,
+and Tim Cook warned in May 2025 that tariffs would cost Apple at least
+<claim source="https://www.theregister.com/2025/05/02/apple_q2_2025/" quote="tariff cost for Q3: $900 million minimum" page="The Register, May 2, 2025" context="Tim Cook on tariff uncertainty: I don't want to predict the future because I'm not sure what will happen with the tariffs. Predicted minimum tariff cost for Q3: $900 million">$900 million in a single quarter</claim>.</p>
+
+<h3>Regulatory and Antitrust Risk</h3>
+<p>Apple faces a three-front regulatory battle. In the US, the DOJ antitrust lawsuit is advancing — a federal judge ruled in June 2025 that
+<claim source="https://www.mintz.com/insights-center/viewpoints/2025-07-02-judge-allows-justice-departments-iphone-monopolization-suit" quote="Apple's alleged US market shares within the government's asserted markets (65% for smartphones and 70% for performance smartphones) are high enough to allege monopoly power." page="Mintz Law, July 2, 2025" context="Court finding: Apple's alleged US market shares within the government's asserted markets (65% for smartphones and 70% for performance smartphones) are high enough to allege monopoly power.">Apple's alleged 65% US smartphone market share and 70% performance smartphone market share are sufficient to allege monopoly power</claim>,
+allowing the case to proceed toward a trial expected no earlier than 2028. In Europe, the EU's Digital Markets Act has already resulted in
+<claim source="https://digital-markets-act.ec.europa.eu/commission-finds-apple-and-meta-breach-digital-markets-act-2025-04-23_en" quote="Apple fined €500 million for breaching its anti-steering obligation under the Digital Markets Act (DMA)" page="European Commission, April 23, 2025" context="Apple fined €500 million for breaching its anti-steering obligation under the Digital Markets Act (DMA)">a €500 million fine for breaching the DMA's anti-steering obligation</claim>.
+Critically, the DOJ is also appealing the Google search default ruling, which threatens Apple's
+<claim source="https://fortune.com/2025/07/30/apple-google-jpmorgan-billion-revenue-hit-antitrust-doj-case/" quote="Apple could lose up to $12.5 billion in annual revenue if a federal judge forces Google to change the way it pays for its search engine agreements." page="Fortune / JPMorgan, July 30, 2025" context="JPMorgan analysis: Apple could lose up to $12.5 billion in annual revenue if a federal judge forces Google to change the way it pays for its search engine agreements. This represents approximately 15% of Apple's earnings per share in a worst-case scenario.">$15–20 billion annual Google search deal — a JPMorgan analysis estimates a potential $12.5 billion annual revenue hit in the worst case</claim>.</p>
+
+<h3>Valuation Premium</h3>
+<p>Apple's premium valuation is the most commonly cited bear argument. The stock currently trades at a
+<claim source="https://stockanalysis.com/stocks/aapl/statistics/" quote="PE Ratio: 38.21" page="StockAnalysis.com, June 3, 2026" context="PE Ratio: 38.21. Forward PE: 34.58. PEG Ratio: 3.08. PS Ratio: 10.12. Market Cap: 4.56T">trailing P/E of 38.2x and forward P/E of 34.6x, with a PEG ratio of 3.08</claim>.
+This represents a significant premium to Apple's own history —
+<claim source="https://www.gurufocus.com/term/pettm/AAPL" quote="41% above its 10Y median of 26.56" page="GuruFocus, June 3, 2026" context="Current P/E (TTM): 37.52. 10-Year Median P/E: 26.56. The current P/E is 41% above its 10Y median of 26.56.">Apple's current P/E is 41% above its 10-year median of 26.56x</claim>.
+Compared to peers, the premium is stark: Microsoft trades at a forward P/E of
+<claim source="https://stockanalysis.com/stocks/msft/statistics/" quote="Forward PE: 23.12" page="StockAnalysis.com, June 3, 2026" context="Microsoft: PE Ratio: 25.46. Forward PE: 23.12. PEG Ratio: 1.43. EV / EBITDA: 17.47.">23.1x</claim>,
+Alphabet at
+<claim source="https://stockanalysis.com/stocks/googl/statistics/" quote="Forward PE: 28.72" page="StockAnalysis.com, June 3, 2026" context="Alphabet: PE Ratio: 27.39. Forward PE: 28.72. PEG Ratio: 1.78. EV / EBITDA: 26.77.">28.7x</claim>,
+and Meta at
+<claim source="https://stockanalysis.com/stocks/meta/statistics/" quote="Forward PE: 18.21" page="StockAnalysis.com, June 3, 2026" context="Meta: PE Ratio: 21.74. Forward PE: 18.21. PEG Ratio: 0.88. EV / EBITDA: 14.47.">just 18.2x</claim> — all with comparable or faster earnings growth than Apple's.
+Raymond James analyst Srini Pajjuri, resuming coverage in January 2026 with a cautious Market Perform rating, noted:
+<claim source="https://markets.financialcontent.com/stocks/article/marketminute-2026-1-2-valuation-vs-innovation-raymond-james-resumes-apple-coverage-with-a-cautious-stance-for-2026" quote="the current stock price of approximately $271 per share already incorporates the optimism surrounding its AI roadmap" page="Financial Content / Market Minute, January 2, 2026" context="Raymond James analyst Srini Pajjuri: the current stock price of approximately $271 per share already incorporates the optimism surrounding its AI roadmap. The days of easy, double-digit outperformance may be giving way to a more mature, valuation-sensitive era.">"the current stock price already incorporates the optimism surrounding its AI roadmap"</claim>
+— and the stock has since risen ~15% above that level.</p>
+
+<h3>Hardware Saturation and Lengthening Upgrade Cycles</h3>
+<p>iPhone upgrade cycles continue to stretch.
+<claim source="https://secondarymarket.news/blog/iphone-upgrade-cycle-lengthens-cirp-2025/" quote="42% of US iPhone replacements in the 12 months ending September 2025 involved devices owned for 3+ years" page="Secondary Market News / CIRP, November 19, 2025" context="42% of US iPhone replacements in the 12 months ending September 2025 involved devices owned for 3+ years — up sharply from 32% the prior year and 24% five years ago">42% of US iPhone replacements in the 12 months ending September 2025 involved devices owned for 3+ years, up from 32% the prior year</claim>.
+The average traded-in iPhone in the US is now nearly 3.6 years old. While AI-driven refresh cycles could reverse this trend — Q1 FY2026 iPhone revenue surged 23% year-over-year — Raymond James projects
+<claim source="https://appleinsider.com/articles/26/01/02/raymond-james-has-restarted-apple-coverage-and-isnt-impressed" quote="iPhone shipments expected to rise only 4% to 238 million units in 2025; 3% in 2026 and 2027" page="AppleInsider / Raymond James, January 2, 2026" context="iPhone shipments expected to rise only 4% to 238 million units in 2025; 3% in 2026 and 2027. Apple's valuation leaves little room for near-term upside.">iPhone unit growth of only 3% in both 2026 and 2027 on a volume basis</claim>.</p>
+
+<h2>Valuation vs. Peers: Summary Table</h2>
+
+<table>
+<thead><tr><th>Metric</th><th>AAPL</th><th>MSFT</th><th>GOOGL</th><th>META</th></tr></thead>
+<tbody>
+<tr><td>Trailing P/E</td><td>38.2x</td><td>25.5x</td><td>27.4x</td><td>21.7x</td></tr>
+<tr><td>Forward P/E</td><td>34.6x</td><td>23.1x</td><td>28.7x</td><td>18.2x</td></tr>
+<tr><td>PEG Ratio</td><td>3.08</td><td>1.43</td><td>1.78</td><td>0.88</td></tr>
+<tr><td>EV/EBITDA</td><td>28.2x</td><td>17.5x</td><td>26.8x</td><td>14.5x</td></tr>
+<tr><td>Market Cap</td><td>$4.56T</td><td>$3.17T</td><td>$4.35T</td><td>$1.58T</td></tr>
+</tbody>
+</table>
+<p><em>Source: <claim source="https://stockanalysis.com/stocks/aapl/statistics/" quote="PE Ratio: 38.21" page="StockAnalysis.com, June 3, 2026" context="All metrics from StockAnalysis.com as of June 3, 2026 market close.">StockAnalysis.com, June 3, 2026</claim>. Apple's PEG of 3.08 is more than double its closest peer.</em></p>
+
+<h2>Market Sentiment and Institutional Activity</h2>
+
+<p>AAPL closed at
+<claim source="https://www.marketbeat.com/stocks/NASDAQ/AAPL/chart/" quote="Current Price: $310.26 (as of 04:00 PM Eastern on 06/03/2026), down 1.57%" page="MarketBeat, June 3, 2026" context="Current Price: $310.26 (as of 04:00 PM Eastern on 06/03/2026), down 1.57%. Market Capitalization: $4.50 trillion. Year-to-Date Return: +14.12%. 12-Month Performance: +52.63%.">$310.26 on June 3, 2026 — up 14.12% year-to-date and 52.63% over the prior twelve months</claim>.
+The 52-week range runs from $195.07 to $315.20. Short interest is benign at
+<claim source="https://www.marketbeat.com/stocks/NASDAQ/AAPL/short-interest/" quote="Short Percent of Float: 0.95%" page="MarketBeat, May 15, 2026" context="Shares Sold Short: 138,782,718 shares. Short Percent of Float: 0.95%. Days to Cover: 2.7. Dollar Volume Sold Short: $41.67 billion.">0.95% of float with 2.7 days to cover</claim>,
+indicating bears are not pressing the position. Institutional ownership stands at
+<claim source="https://www.marketbeat.com/stocks/NASDAQ/AAPL/institutional-ownership/" quote="Current Institutional Ownership Percentage: 67.73%" page="MarketBeat, 2026" context="Current Institutional Ownership Percentage: 67.73%. Total inflows reached $287.08B while outflows amounted to $131.09B.">67.73%, with $287 billion in institutional inflows vs. $131 billion in outflows over the past 12 months</claim> — net buying. Renaissance Technologies notably
+<claim source="https://www.foreignpolicyjournal.com/2026/05/14/renaissance-technologies-opens-770-million-apple-nasdaq-aapl-position-in-q1-2026/" quote="opened a new $770 million position in Apple Inc. [NASDAQ: AAPL] during the first quarter of 2026" page="Foreign Policy Journal, May 14, 2026" context="Renaissance Technologies opened a new $770 million position in Apple Inc. [NASDAQ: AAPL] during the first quarter of 2026, ahead of Apple's record Q2 earnings report.">opened a new $770 million Apple position in Q1 2026</claim>.</p>
+
+<p>The most significant institutional overhang is Berkshire Hathaway's continued reduction of its Apple stake. Under Warren Buffett, Berkshire sold
+<claim source="https://www.fool.com/investing/2026/03/02/warren-buffett-sell-75-aapl-buy-6-straight-quarter/" quote="687,642,574 shares were sold, ultimately reducing this still-No. 1 position by 75%" page="The Motley Fool, March 2, 2026" context="687,642,574 shares were sold, ultimately reducing this still-No. 1 position by 75% over nine quarters, leading up to Buffett's departure.">75% of its Apple position over nine quarters</claim>,
+from a peak of 915 million shares (worth ~$174 billion) to approximately 228 million shares (worth ~$59–62 billion) by the end of 2025. Buffett's rationale, consistent with his broader value philosophy, appears to be that
+<claim source="https://www.fool.com/investing/2026/03/02/warren-buffett-sell-75-aapl-buy-6-straight-quarter/" quote="When Warren Buffett initially bought shares in the first quarter of 2016, it was trading at 10 to 15 times trailing 12-month (TTM) EPS. As of the closing bell on Feb. 25, Apple's TTM EPS is 34.5." page="The Motley Fool, March 2, 2026" context="When Warren Buffett initially bought shares in the first quarter of 2016, it was trading at 10 to 15 times trailing 12-month (TTM) EPS. As of the closing bell on Feb. 25, Apple's TTM EPS is 34.5.">he bought at 10–15x earnings and sold as it approached 34–38x</claim>.</p>
+
+<h2>Near-Term Catalyst: WWDC 2026 (June 8)</h2>
+
+<p>The most important near-term event for Apple investors is WWDC 2026, beginning June 8. Morgan Stanley described it as a
+<claim source="https://finance.yahoo.com/markets/stocks/articles/apple-wwdc-2026-key-catalyst-233816532.html" quote="Low investor expectations create a favorable setup for a narrative re-rating" page="Yahoo Finance / Morgan Stanley, June 1, 2026" context="WWDC 2026 could be a key catalyst for Apple stock, potentially reframing the company as an 'AI winner'. Low investor expectations create a favorable setup for a narrative re-rating. A polished AI platform and clear Agentic vision could push valuation to $365–$385, with upside to $440.">"key catalyst" with low expectations creating a favorable setup for a narrative re-rating</claim>,
+with potential to push valuation to $365–$385 and, in a bull case, $440. The conference is expected to unveil a rebuilt agentic Siri (powered by Google Gemini), iOS 27, and Apple's vision for on-device and cloud AI. As one analysis described it:
+<claim source="https://www.fool.com/investing/2026/06/02/apple-biggest-ai-test-june-8-whats-stake-wwdc/" quote="It's not a stretch to call this year's WWDC the most significant software announcement in recent history." page="The Motley Fool, June 2, 2026" context="Apple trading at $310.26 with a $4.6 trillion market cap. It's not a stretch to call this year's WWDC the most significant software announcement in recent history. If Siri is a hit, a genuinely capable AI assistant that's easy to use, it could cement Apple's dominance in personal electronics.">"It's not a stretch to call this year's WWDC the most significant software announcement in recent history."</claim>
+If Siri lands as a capable AI assistant, it could accelerate the upgrade cycle and re-rate the stock toward the high-end analyst targets.</p>
+
+<h2>Verdict</h2>
+
+<p>Apple is a <strong>high-quality business at a premium price</strong>. The financial fundamentals are exceptional — record revenues, expanding margins, Services growing at 76%+ gross margins, and a cash-generative balance sheet. The AI thesis is credible and WWDC on June 8 represents a significant near-term catalyst. However, several factors create real caution:</p>
+<ul>
+<li><strong>Valuation:</strong> At 38x trailing and 35x forward earnings with a PEG of 3.08, Apple is priced for perfection and trades at a ~41% premium to its own 10-year median P/E of ~26x.</li>
+<li><strong>Analyst target saturation:</strong> The average price target of $310.51 essentially equals the current price — consensus has largely priced in the bull case.</li>
+<li><strong>China and tariff risk:</strong> ~90% of iPhone assembly in China, up to $8.5B in potential annual tariff costs, and continued AI restrictions in mainland China are material headwinds.</li>
+<li><strong>Regulatory exposure:</strong> A $12.5B worst-case revenue hit from the Google search deal, ongoing DOJ antitrust litigation, and EU DMA compliance costs are not trivial.</li>
+<li><strong>Berkshire selling:</strong> Warren Buffett trimmed 75% of his Apple position as the stock re-rated from 10–15x to 34–38x earnings — a notable value signal from history's most successful stock picker.</li>
+</ul>
+<p><strong>Bottom line:</strong> For long-term investors with a 3–5 year horizon and conviction in Apple's AI monetization story, the stock remains defensible — the Services business alone is a durable compounder. For near-term or value-oriented investors, the combination of a maxed-out consensus target, stretched valuation, and pending AI execution test makes current levels uninviting without a meaningful pullback or WWDC-driven catalyst.</p>
+
+  </article>
+
+  <!-- Sources section — auto-generated by JS -->
+  <div class="sources-section" id="sources-section" style="display:none">
+    <h2>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:.4rem"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Sources
+    </h2>
+    <div id="sources-list"></div>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<!-- ── SIDEBAR ──────────────────────────────────────────── -->
+<div id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+<aside id="source-sidebar" role="dialog" aria-modal="true" aria-label="Source verification">
+  <div class="sidebar-header">
+    <div class="sidebar-header-left">
+      <h2>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Source Verification
+      </h2>
+      <p>Authentic grounded context from source</p>
+    </div>
+    <button class="sidebar-close" onclick="closeSidebar()" title="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="sidebar-body" id="sidebar-body">
+    <div class="empty-state">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".25"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <p style="font-size:.85rem">Click a citation chip to inspect its source.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- ── JAVASCRIPT ────────────────────────────────────────── -->
+<script>
+/* ── SVG icons ───────────────────────────────────────────── */
+const SVG = {
+  fileSearch:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>`,
+  globe:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  file:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  network:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="12" x2="5" y2="16"/><line x1="12" y1="12" x2="19" y2="16"/></svg>`,
+  quote:`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 2v8c0 1 0 2 2 3l-1 3z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 2v8c0 1 0 2 2 3l-1 3z"/></svg>`,
+  calc:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>`,
+};
+
+/* ── Helpers ─────────────────────────────────────────────── */
+const isUrl = s => s && (s.startsWith('http') || s.startsWith('www') || s.startsWith('//'));
+
+function attr(el, name){return (el.getAttribute(name)||'').trim()}
+
+/* Highlight quote in context (case-insensitive, returns HTML) */
+function highlightQuote(ctx, quote){
+  if(!ctx || !quote) return escHtml(ctx||'');
+  const esc = quote.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return ctx.replace(new RegExp(`(${esc})`,'gi'),
+    '<span class="hl">$1</span>');
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── Build chips from <claim> tags ───────────────────────── */
+let sourcesMap = {}; // key → {source,quote,page,context,logic,idx}
+let sourceCount = 0;
+
+function buildChips(){
+  const claims = document.querySelectorAll('#report claim');
+  claims.forEach(cl => {
+    const src   = attr(cl,'source');
+    const quote = attr(cl,'quote');
+    const page  = attr(cl,'page');
+    const ctx   = attr(cl,'context') || quote;
+    const logic = attr(cl,'logic');
+    const text  = cl.innerHTML;
+
+    // Deduplicate sources by (source+quote)
+    const key = src+'|'+quote;
+    if(!sourcesMap[key]){
+      sourceCount++;
+      sourcesMap[key] = {source:src,quote,page,context:ctx,logic,idx:sourceCount};
+    }
+    const {idx} = sourcesMap[key];
+
+    const chip = document.createElement('span');
+    if(isUrl(src)){
+      chip.className = 'chip chip-web';
+      chip.setAttribute('role','link');
+      chip.innerHTML = `${text}${SVG.globe}<sup style="font-size:.65em;opacity:.7">${idx}</sup>`;
+      chip.addEventListener('click', e=>{
+        e.stopPropagation();
+        openSidebar({source:src,quote,page,context:ctx,logic,idx});
+      });
+    } else {
+      chip.className = 'chip chip-file';
+      chip.setAttribute('role','button');
+      chip.setAttribute('tabindex','0');
+      chip.innerHTML = `${text}${SVG.fileSearch}<sup style="font-size:.65em;opacity:.7">${idx}</sup>`;
+      chip.addEventListener('click', e=>{
+        e.stopPropagation();
+        openSidebar({source:src,quote,page,context:ctx,logic,idx});
+      });
+      chip.addEventListener('keydown', e=>{
+        if(e.key==='Enter'||e.key===' ') chip.click();
+      });
+    }
+    cl.replaceWith(chip);
+  });
+}
+
+/* ── Build Sources list ──────────────────────────────────── */
+function buildSourcesList(){
+  const section = document.getElementById('sources-section');
+  const list    = document.getElementById('sources-list');
+  if(!sourceCount){ return; }
+  section.style.display = '';
+
+  Object.values(sourcesMap).sort((a,b)=>a.idx-b.idx).forEach(s=>{
+    const url = isUrl(s.source);
+    const ref = url
+      ? `<a class="source-ref is-url" href="${s.source}" target="_blank" rel="noopener">${s.source} ↗</a>`
+      : `<span class="source-ref" data-key="${s.source}|${s.quote}">${s.source}</span>`;
+
+    const item = document.createElement('div');
+    item.className = 'source-item';
+    item.innerHTML = `
+      <div class="source-num">${s.idx}</div>
+      <div class="source-body">
+        ${ref}
+        ${s.page ? `<div class="source-page">Ref: ${escHtml(s.page)}</div>` : ''}
+        ${s.quote ? `<div class="source-quote">"${escHtml(s.quote)}"</div>` : ''}
+      </div>`;
+
+    if(!url){
+      item.querySelector('.source-ref').addEventListener('click', ()=>{
+        openSidebar(s);
+      });
+    }
+    list.appendChild(item);
+  });
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+function openSidebar(s){
+  const body = document.getElementById('sidebar-body');
+  const url  = isUrl(s.source);
+
+  const pageRow = (s.page && !url)
+    ? `<div class="meta-page">
+         <span class="meta-page-label">Ref</span>
+         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:.4"><polyline points="9 18 15 12 9 6"/></svg>
+         <span class="meta-page-val">${escHtml(s.page)}</span>
+       </div>` : '';
+
+  const logicBlock = s.logic
+    ? `<div class="logic-block">
+         <div class="logic-block-header">
+           <div class="logic-icon">${SVG.calc}</div>
+           <span class="logic-title">Derived Calculation</span>
+         </div>
+         <div class="logic-text">${escHtml(s.logic)}</div>
+       </div>` : '';
+
+  const contextHtml = s.context
+    ? `<div class="paper-wrapper">
+         <div class="paper-tab">${SVG.quote} Grounding Segment</div>
+         <div class="paper">
+           <div class="paper-topbar"></div>
+           <div class="paper-content">
+             ... ${highlightQuote(s.context, s.quote)} ...
+           </div>
+           <div class="paper-foot"><span>Original Excerpt</span><span>Verified</span></div>
+         </div>
+         <div class="paper-note">* Formatting may vary from original source.</div>
+       </div>` : '';
+
+  body.innerHTML = `
+    <div class="meta-card">
+      <div class="meta-card-top">
+        <div class="meta-icon">${url ? SVG.network : SVG.file}</div>
+        <div>
+          <div class="meta-label">Verified Source</div>
+          <div class="meta-source-name">
+            ${url
+              ? `<a href="${s.source}" target="_blank" rel="noopener">${s.source}</a>`
+              : escHtml(s.source)}
+          </div>
+        </div>
+      </div>
+      ${pageRow}
+    </div>
+    ${logicBlock}
+    ${contextHtml}
+  `;
+
+  document.getElementById('sidebar-backdrop').classList.add('open');
+  document.getElementById('source-sidebar').classList.add('open');
+  document.addEventListener('keydown', onEsc);
+}
+
+function closeSidebar(){
+  document.getElementById('sidebar-backdrop').classList.remove('open');
+  document.getElementById('source-sidebar').classList.remove('open');
+  document.removeEventListener('keydown', onEsc);
+}
+
+function onEsc(e){ if(e.key==='Escape') closeSidebar(); }
+
+/* ── Theme toggle ─────────────────────────────────────────── */
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  html.dataset.theme = next;
+  try{ localStorage.setItem('dr-theme', next); }catch(_){}
+}
+(function(){
+  try{
+    const saved = localStorage.getItem('dr-theme');
+    if(saved) document.documentElement.dataset.theme = saved;
+  }catch(_){}
+})();
+
+/* ── Init ─────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', ()=>{
+  buildChips();
+  buildSourcesList();
+});
+</script>
+</body>
+</html>

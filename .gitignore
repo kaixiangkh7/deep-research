@@ -1,0 +1,15 @@
+# Claude Code local settings (may contain personal API keys or hooks)
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node (if anyone adds tooling)
+node_modules/

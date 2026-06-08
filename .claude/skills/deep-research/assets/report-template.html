@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!--REPORT_TITLE--></title>
+<style>
+/* ── Reset & base ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0f172a;
+  --bg2:#1e293b;
+  --bg3:#0b1221;
+  --surface:#162032;
+  --border:#2d3f55;
+  --text:#f1f5f9;
+  --text2:#94a3b8;
+  --text3:#64748b;
+  --em:#10b981;  /* emerald-500 */
+  --em-dim:#059669;
+  --em-fade:rgba(16,185,129,0.15);
+  --blue:#60a5fa;
+  --blue-dim:#3b82f6;
+  --blue-fade:rgba(96,165,250,0.15);
+  --yellow:#fde047;
+  --yellow-bg:#854d0e;
+  --indigo:#818cf8;
+  --indigo-fade:rgba(129,140,248,0.12);
+  --radius:8px;
+  --shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+
+[data-theme="light"]{
+  --bg:#f8fafc;
+  --bg2:#e2e8f0;
+  --bg3:#f1f5f9;
+  --surface:#ffffff;
+  --border:#cbd5e1;
+  --text:#0f172a;
+  --text2:#475569;
+  --text3:#94a3b8;
+  --em:#047857;
+  --em-dim:#059669;
+  --em-fade:rgba(4,120,87,0.1);
+  --blue:#1d4ed8;
+  --blue-dim:#2563eb;
+  --blue-fade:rgba(29,78,216,0.1);
+  --yellow:#92400e;
+  --yellow-bg:#fef08a;
+  --indigo:#4338ca;
+  --indigo-fade:rgba(67,56,202,0.08);
+  --shadow:0 4px 24px rgba(0,0,0,0.1);
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;
+  line-height:1.7;
+  min-height:100vh;
+}
+
+/* ── Custom scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--text3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--text2)}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.page-wrapper{max-width:860px;margin:0 auto;padding:2rem 1.5rem 6rem}
+
+/* ── Header ───────────────────────────────────────────────── */
+.report-header{
+  border-bottom:1px solid var(--border);
+  padding-bottom:1.5rem;
+  margin-bottom:2.5rem;
+}
+.report-header-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.75rem;
+}
+.report-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.65rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--em);
+  background:var(--em-fade);
+  border:1px solid rgba(16,185,129,.25);
+  padding:.25rem .6rem;
+  border-radius:20px;
+  margin-bottom:.75rem;
+}
+.report-title{
+  font-size:1.75rem;
+  font-weight:700;
+  color:var(--text);
+  line-height:1.3;
+}
+.report-meta{
+  font-size:.8rem;
+  color:var(--text3);
+  display:flex;
+  flex-wrap:wrap;
+  gap:1rem;
+  margin-top:.5rem;
+}
+.report-meta span{display:flex;align-items:center;gap:.3rem}
+
+/* ── Theme toggle ─────────────────────────────────────────── */
+.theme-btn{
+  flex-shrink:0;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  color:var(--text2);
+  border-radius:var(--radius);
+  padding:.4rem .75rem;
+  font-size:.75rem;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  transition:all .15s;
+  white-space:nowrap;
+}
+.theme-btn:hover{border-color:var(--text3);color:var(--text)}
+.theme-icon-dark,.theme-icon-light{display:none}
+[data-theme="dark"] .theme-icon-dark{display:inline}
+[data-theme="light"] .theme-icon-light{display:inline}
+
+/* ── Report body typography ───────────────────────────────── */
+#report h1{font-size:1.4rem;font-weight:700;margin:2rem 0 .75rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:.5rem}
+#report h2{font-size:1.2rem;font-weight:600;margin:1.75rem 0 .6rem;color:var(--text)}
+#report h3{font-size:1rem;font-weight:600;margin:1.5rem 0 .5rem;color:var(--text2)}
+#report p{margin:.6rem 0 1rem}
+#report ul,#report ol{padding-left:1.5rem;margin:.5rem 0 1rem}
+#report li{margin:.3rem 0}
+#report strong{color:var(--text);font-weight:600}
+#report em{color:var(--text2)}
+#report hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+#report blockquote{
+  border-left:3px solid var(--em);
+  padding:.75rem 1rem;
+  margin:1rem 0;
+  background:var(--em-fade);
+  border-radius:0 var(--radius) var(--radius) 0;
+  color:var(--text2);
+  font-style:italic;
+}
+#report code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  font-size:.85em;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  padding:.1em .35em;
+  border-radius:4px;
+  color:var(--em);
+}
+#report pre{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1rem;
+  overflow-x:auto;
+  margin:1rem 0;
+}
+#report pre code{background:none;border:none;padding:0;color:var(--text2)}
+#report table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9rem}
+#report th{background:var(--bg2);color:var(--text2);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;padding:.6rem 1rem;border-bottom:1px solid var(--border);text-align:left}
+#report td{padding:.6rem 1rem;border-bottom:1px solid var(--border);color:var(--text2)}
+#report tr:hover td{background:var(--surface)}
+
+/* ── Citation chips ───────────────────────────────────────── */
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.2rem;
+  cursor:pointer;
+  border-radius:3px;
+  padding:0 2px;
+  margin:0 1px;
+  font-weight:500;
+  transition:background .15s,color .15s;
+  position:relative;
+}
+.chip-file{
+  color:var(--em);
+  border-bottom:1.5px dashed var(--em-dim);
+}
+.chip-file:hover{background:var(--em-fade);color:var(--text)}
+.chip-web{
+  color:var(--blue);
+  border-bottom:1.5px dashed var(--blue-dim);
+  text-decoration:none;
+}
+.chip-web:hover{background:var(--blue-fade);color:var(--text)}
+.chip svg{opacity:.55;flex-shrink:0;transition:opacity .15s}
+.chip:hover svg{opacity:1}
+
+/* ── Sources section ──────────────────────────────────────── */
+.sources-section{
+  margin-top:3rem;
+  padding-top:1.5rem;
+  border-top:2px solid var(--border);
+}
+.sources-section h2{
+  font-size:1rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  color:var(--text3);
+  margin-bottom:1.25rem;
+}
+.source-item{
+  display:flex;
+  gap:.75rem;
+  padding:.75rem 0;
+  border-bottom:1px solid var(--border);
+  font-size:.85rem;
+}
+.source-num{
+  color:var(--text3);
+  font-weight:700;
+  font-size:.75rem;
+  min-width:1.4rem;
+  margin-top:.1rem;
+}
+.source-body{flex:1}
+.source-ref{
+  cursor:pointer;
+  font-weight:600;
+  color:var(--text);
+  word-break:break-all;
+}
+.source-ref:hover{color:var(--em)}
+.source-ref.is-url{color:var(--blue)}
+.source-ref.is-url:hover{color:var(--blue-dim)}
+.source-page{color:var(--text3);font-size:.75rem;margin:.2rem 0}
+.source-quote{
+  color:var(--text2);
+  font-style:italic;
+  font-size:.8rem;
+  margin-top:.3rem;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+/* ── Sidebar backdrop ─────────────────────────────────────── */
+#sidebar-backdrop{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(2,6,23,.8);
+  backdrop-filter:blur(4px);
+  z-index:100;
+}
+#sidebar-backdrop.open{display:block}
+
+/* ── Source sidebar ───────────────────────────────────────── */
+#source-sidebar{
+  position:fixed;top:0;right:0;
+  height:100%;width:100%;
+  max-width:600px;
+  background:var(--bg2);
+  border-left:1px solid var(--border);
+  box-shadow:var(--shadow);
+  z-index:101;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+#source-sidebar.open{transform:translateX(0)}
+
+.sidebar-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+  flex-shrink:0;
+}
+.sidebar-header-left h2{
+  font-size:1rem;font-weight:700;
+  display:flex;align-items:center;gap:.5rem;color:var(--text);
+}
+.sidebar-header-left p{font-size:.75rem;color:var(--text3);margin-top:.2rem}
+.sidebar-close{
+  background:none;border:none;
+  color:var(--text3);cursor:pointer;
+  border-radius:50%;padding:.4rem;
+  display:flex;align-items:center;
+  transition:background .15s,color .15s;
+}
+.sidebar-close:hover{background:var(--bg);color:var(--text)}
+
+.sidebar-body{flex:1;overflow-y:auto;padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+
+/* Metadata card */
+.meta-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1rem 1.1rem;
+  display:flex;flex-direction:column;gap:.75rem;
+}
+.meta-card-top{display:flex;align-items:center;gap:.85rem}
+.meta-icon{
+  padding:.65rem;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.meta-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:700;margin-bottom:.2rem}
+.meta-source-name{font-size:.9rem;font-weight:600;color:var(--text);word-break:break-all}
+.meta-source-name a{color:var(--blue);text-decoration:underline;word-break:break-all}
+.meta-source-name a:hover{color:var(--blue-dim)}
+.meta-page{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.78rem;color:var(--text2);
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:.35rem .75rem;
+}
+.meta-page-label{color:var(--text3);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.meta-page-val{color:var(--em);font-family:ui-monospace,monospace;font-size:.8rem}
+
+/* Logic block */
+.logic-block{
+  background:var(--indigo-fade);
+  border:1px solid rgba(129,140,248,.25);
+  border-radius:var(--radius);
+  padding:.9rem 1rem;
+}
+.logic-block-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.logic-icon{padding:.3rem;background:rgba(129,140,248,.15);border:1px solid rgba(129,140,248,.3);border-radius:5px;display:flex;align-items:center}
+.logic-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--indigo)}
+.logic-text{font-size:.82rem;color:var(--indigo);font-family:ui-monospace,monospace;background:rgba(0,0,0,.2);padding:.5rem .7rem;border-radius:5px;border:1px solid rgba(255,255,255,.05)}
+
+/* Paper excerpt */
+.paper-wrapper{position:relative;padding-top:.9rem}
+.paper-tab{
+  position:absolute;top:0;left:1rem;
+  background:var(--em);color:#fff;
+  font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  padding:.2rem .5rem .2rem .4rem;
+  border-radius:4px 4px 0 0;
+  display:flex;align-items:center;gap:.3rem;
+  z-index:1;
+}
+.paper{
+  background:#fff;color:#1e293b;
+  border-radius:8px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  overflow:hidden;
+  min-height:200px;
+}
+.paper-topbar{height:6px;background:#e2e8f0}
+.paper-content{
+  padding:2rem 2.25rem;
+  font-family:Georgia,Cambria,"Times New Roman",Times,serif;
+  font-size:1rem;line-height:1.9;color:#334155;
+}
+.paper-content::before,.paper-content::after{display:block;content:"";width:3rem;height:3px;background:#e2e8f0;margin-bottom:1.25rem}
+.paper-content::after{width:6rem;margin-top:1.25rem;margin-bottom:0}
+.paper-foot{
+  background:#f8fafc;border-top:1px solid #e2e8f0;
+  padding:.5rem 1rem;
+  display:flex;justify-content:space-between;
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;
+}
+.paper-note{text-align:center;font-size:.7rem;color:var(--text3);margin-top:.6rem}
+
+/* Quote highlight */
+.hl{
+  background:#fde047;color:#1e293b;
+  font-weight:700;
+  padding:.05em .2em;
+  border-radius:2px;
+  border-bottom:2px solid #854d0e;
+  box-shadow:0 1px 2px rgba(0,0,0,.2);
+}
+
+/* Empty state */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:1rem;color:var(--text3);
+  text-align:center;padding:2rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media(max-width:640px){
+  #source-sidebar{max-width:100%}
+  .page-wrapper{padding:1.25rem 1rem 5rem}
+  .report-title{font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ── MAIN CONTENT ─────────────────────────────────────── -->
+<div class="page-wrapper">
+
+  <header class="report-header">
+    <div class="report-header-top">
+      <div>
+        <div class="report-badge">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Grounded Research Report
+        </div>
+        <h1 class="report-title"><!--REPORT_TITLE--></h1>
+        <div class="report-meta"><!--REPORT_META--></div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">
+        <span class="theme-icon-dark">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          Light
+        </span>
+        <span class="theme-icon-light">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Report body — Claude fills this in -->
+  <article id="report">
+    <!--REPORT_BODY-->
+  </article>
+
+  <!-- Sources section — auto-generated by JS -->
+  <div class="sources-section" id="sources-section" style="display:none">
+    <h2>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:.4rem"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Sources
+    </h2>
+    <div id="sources-list"></div>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<!-- ── SIDEBAR ──────────────────────────────────────────── -->
+<div id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+<aside id="source-sidebar" role="dialog" aria-modal="true" aria-label="Source verification">
+  <div class="sidebar-header">
+    <div class="sidebar-header-left">
+      <h2>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Source Verification
+      </h2>
+      <p>Authentic grounded context from source</p>
+    </div>
+    <button class="sidebar-close" onclick="closeSidebar()" title="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="sidebar-body" id="sidebar-body">
+    <div class="empty-state">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".25"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <p style="font-size:.85rem">Click a citation chip to inspect its source.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- ── JAVASCRIPT ────────────────────────────────────────── -->
+<script>
+/* ── SVG icons ───────────────────────────────────────────── */
+const SVG = {
+  fileSearch:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>`,
+  globe:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  file:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  network:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="12" x2="5" y2="16"/><line x1="12" y1="12" x2="19" y2="16"/></svg>`,
+  quote:`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 2v8c0 1 0 2 2 3l-1 3z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 2v8c0 1 0 2 2 3l-1 3z"/></svg>`,
+  calc:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>`,
+};
+
+/* ── Helpers ─────────────────────────────────────────────── */
+const isUrl = s => s && (s.startsWith('http') || s.startsWith('www') || s.startsWith('//'));
+
+function attr(el, name){return (el.getAttribute(name)||'').trim()}
+
+/* Highlight quote in context (case-insensitive, returns HTML) */
+function highlightQuote(ctx, quote){
+  if(!ctx || !quote) return escHtml(ctx||'');
+  const esc = quote.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return ctx.replace(new RegExp(`(${esc})`,'gi'),
+    '<span class="hl">$1</span>');
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── Build chips from <claim> tags ───────────────────────── */
+let sourcesMap = {}; // key → {source,quote,page,context,logic,idx}
+let sourceCount = 0;
+
+function buildChips(){
+  const claims = document.querySelectorAll('#report claim');
+  claims.forEach(cl => {
+    const src   = attr(cl,'source');
+    const quote = attr(cl,'quote');
+    const page  = attr(cl,'page');
+    const ctx   = attr(cl,'context') || quote;
+    const logic = attr(cl,'logic');
+    const text  = cl.innerHTML;
+
+    // Deduplicate sources by (source+quote)
+    const key = src+'|'+quote;
+    if(!sourcesMap[key]){
+      sourceCount++;
+      sourcesMap[key] = {source:src,quote,page,context:ctx,logic,idx:sourceCount};
+    }
+    const {idx} = sourcesMap[key];
+
+    const chip = document.createElement('span');
+    if(isUrl(src)){
+      chip.className = 'chip chip-web';
+      chip.setAttribute('role','link');
+      chip.innerHTML = `${text}${SVG.globe}<sup style="font-size:.65em;opacity:.7">${idx}</sup>`;
+      chip.addEventListener('click', e=>{
+        e.stopPropagation();
+        openSidebar({source:src,quote,page,context:ctx,logic,idx});
+      });
+    } else {
+      chip.className = 'chip chip-file';
+      chip.setAttribute('role','button');
+      chip.setAttribute('tabindex','0');
+      chip.innerHTML = `${text}${SVG.fileSearch}<sup style="font-size:.65em;opacity:.7">${idx}</sup>`;
+      chip.addEventListener('click', e=>{
+        e.stopPropagation();
+        openSidebar({source:src,quote,page,context:ctx,logic,idx});
+      });
+      chip.addEventListener('keydown', e=>{
+        if(e.key==='Enter'||e.key===' ') chip.click();
+      });
+    }
+    cl.replaceWith(chip);
+  });
+}
+
+/* ── Build Sources list ──────────────────────────────────── */
+function buildSourcesList(){
+  const section = document.getElementById('sources-section');
+  const list    = document.getElementById('sources-list');
+  if(!sourceCount){ return; }
+  section.style.display = '';
+
+  Object.values(sourcesMap).sort((a,b)=>a.idx-b.idx).forEach(s=>{
+    const url = isUrl(s.source);
+    const ref = url
+      ? `<a class="source-ref is-url" href="${s.source}" target="_blank" rel="noopener">${s.source} ↗</a>`
+      : `<span class="source-ref" data-key="${s.source}|${s.quote}">${s.source}</span>`;
+
+    const item = document.createElement('div');
+    item.className = 'source-item';
+    item.innerHTML = `
+      <div class="source-num">${s.idx}</div>
+      <div class="source-body">
+        ${ref}
+        ${s.page ? `<div class="source-page">Ref: ${escHtml(s.page)}</div>` : ''}
+        ${s.quote ? `<div class="source-quote">"${escHtml(s.quote)}"</div>` : ''}
+      </div>`;
+
+    if(!url){
+      item.querySelector('.source-ref').addEventListener('click', ()=>{
+        openSidebar(s);
+      });
+    }
+    list.appendChild(item);
+  });
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+function openSidebar(s){
+  const body = document.getElementById('sidebar-body');
+  const url  = isUrl(s.source);
+
+  const pageRow = (s.page && !url)
+    ? `<div class="meta-page">
+         <span class="meta-page-label">Ref</span>
+         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:.4"><polyline points="9 18 15 12 9 6"/></svg>
+         <span class="meta-page-val">${escHtml(s.page)}</span>
+       </div>` : '';
+
+  const logicBlock = s.logic
+    ? `<div class="logic-block">
+         <div class="logic-block-header">
+           <div class="logic-icon">${SVG.calc}</div>
+           <span class="logic-title">Derived Calculation</span>
+         </div>
+         <div class="logic-text">${escHtml(s.logic)}</div>
+       </div>` : '';
+
+  const contextHtml = s.context
+    ? `<div class="paper-wrapper">
+         <div class="paper-tab">${SVG.quote} Grounding Segment</div>
+         <div class="paper">
+           <div class="paper-topbar"></div>
+           <div class="paper-content">
+             ... ${highlightQuote(s.context, s.quote)} ...
+           </div>
+           <div class="paper-foot"><span>Original Excerpt</span><span>Verified</span></div>
+         </div>
+         <div class="paper-note">* Formatting may vary from original source.</div>
+       </div>` : '';
+
+  body.innerHTML = `
+    <div class="meta-card">
+      <div class="meta-card-top">
+        <div class="meta-icon">${url ? SVG.network : SVG.file}</div>
+        <div>
+          <div class="meta-label">Verified Source</div>
+          <div class="meta-source-name">
+            ${url
+              ? `<a href="${s.source}" target="_blank" rel="noopener">${s.source}</a>`
+              : escHtml(s.source)}
+          </div>
+        </div>
+      </div>
+      ${pageRow}
+    </div>
+    ${logicBlock}
+    ${contextHtml}
+  `;
+
+  document.getElementById('sidebar-backdrop').classList.add('open');
+  document.getElementById('source-sidebar').classList.add('open');
+  document.addEventListener('keydown', onEsc);
+}
+
+function closeSidebar(){
+  document.getElementById('sidebar-backdrop').classList.remove('open');
+  document.getElementById('source-sidebar').classList.remove('open');
+  document.removeEventListener('keydown', onEsc);
+}
+
+function onEsc(e){ if(e.key==='Escape') closeSidebar(); }
+
+/* ── Theme toggle ─────────────────────────────────────────── */
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  html.dataset.theme = next;
+  try{ localStorage.setItem('dr-theme', next); }catch(_){}
+}
+(function(){
+  try{
+    const saved = localStorage.getItem('dr-theme');
+    if(saved) document.documentElement.dataset.theme = saved;
+  }catch(_){}
+})();
+
+/* ── Init ─────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', ()=>{
+  buildChips();
+  buildSourcesList();
+});
+</script>
+</body>
+</html>
