@@ -2,7 +2,7 @@
 
 > A grounded research team for Claude Code. One command turns any question into a fully-cited, interactive HTML report — built by a planner, six parallel researchers, and a quality auditor working together.
 
-No extra API keys, no external services. Drop the `.claude/` folder into any project and go.
+No extra API keys, no external services. Drop the `.claude/` folder into any project, launch Claude code, type /deep-research and go.
 
 ---
 
