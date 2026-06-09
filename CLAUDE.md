@@ -21,11 +21,12 @@ When the `deep-research` skill is active:
 
 ## Loop behavior
 
-The orchestration runs up to 3 research rounds, 3 INCREMENTAL cycles, 3 REJECTED restarts, and 2 DEBATE rounds before terminating. After any cap is hit, the current best report is delivered with a note.
+Orchestration is a deterministic JS workflow (`workflows/deep-research.js`) — not prompt-driven. Hard caps enforced in code: 3 research rounds, 3 INCREMENTAL cycles, 3 REJECTED restarts, 2 DEBATE rounds. After any cap is hit the current best report is delivered.
 
 ## Extending the pack
 
 To add a new specialist researcher (e.g., a database-researcher or code-executor):
 1. Add `agents/your-agent.md` with the standard frontmatter (`name`, `description`, `tools`).
-2. Update `skills/deep-research/SKILL.md` Phase 2 to include the new agent type in plan tagging.
-3. Update Phase 4 to dispatch the new agent for matching sub-questions.
+2. In `workflows/deep-research.js`, extend the `PLAN_SCHEMA` `workerType` enum to include the new type.
+3. Update `workerPrompt()` to handle the new worker type.
+4. Update the research dispatch `parallel()` call to use the new `agentType` for matching sub-questions.

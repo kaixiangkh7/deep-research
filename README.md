@@ -93,33 +93,47 @@ Four specialized agents, each with a single job:
 | **Document Researcher** | Archivist | Searches local files, PDFs, and codebases with exact file:line citations |
 | **Research Critic** | Quality control | Scores plans before execution; audits reports for ungrounded claims after synthesis |
 
-The **Web Researcher** and **Document Researcher** run in parallel — up to 8 simultaneous workers on a single question, each answering one sub-question independently.
+The **Web Researcher** and **Document Researcher** run in parallel via the workflow's `parallel()` call — all sub-questions dispatch concurrently, each agent answering one independently.
 
 ---
 
 ## How it works
 
+The orchestration runs as a **deterministic workflow script** (`workflows/deep-research.js`) — not a prompt asking the LLM to follow instructions. Control flow, loop caps, and branching are explicit code.
+
 ```
 Your question
      │
      ▼
-  [Plan]  Lead Researcher breaks the question into 4–8 sub-questions
+  [Triage]  QUICK_ANSWER → single agent, inline answer
+            DEEP_RESEARCH → full loop below
      │
      ▼
-  [Score] Research Critic scores the plan (1–5 on 6 criteria) before a line is fetched
+  [Plan]  Workflow decomposes into 1–8 sub-questions, tagged local/web
      │
      ▼
-  [Research]  All workers fire at once — web + local in parallel
+  [Plan Review]  Research Critic scores the plan (6 criteria, 1–5 each)
+                 Low score → one revision pass, then proceed regardless
+     │
+     ▼
+  [Research]  parallel() dispatches all sub-questions concurrently
      │         ├── Web Researcher × N  (live web, SEC filings, docs)
      │         └── Document Researcher × N  (local files, PDFs, codebases)
      ▼
-  [Gaps?]  Missing answers trigger a targeted second round (capped at 3 rounds)
+  [Gap fill?]  ≥2 unanswered → targeted re-plan → parallel() again
+               Capped at 3 rounds total
      │
      ▼
-  [Synthesize]  Lead Researcher writes the HTML report — every claim tagged
+  [Synthesize]  HTML report body with <claim> tags for every fact
      │
      ▼
   [Audit]  Research Critic checks for ungrounded claims
+     │
+     ▼
+  [Arbitrate]  Workflow logic decides: APPROVED / INCREMENTAL / REJECTED / DEBATE
+               • INCREMENTAL → gap-fill + re-synthesize (cap 3 cycles)
+               • REJECTED → restart from Plan (cap 3 restarts)
+               • DEBATE → counter-argument to critic (cap 2 rounds)
      │
      ▼
   [Deliver]  Interactive HTML report saved to ./deep-research-report.html
@@ -188,13 +202,16 @@ The output HTML is fully self-contained — no server, no build step, just open 
 │   ├── document-researcher.md  # Archivist — local files
 │   └── research-critic.md      # QC — plan scoring + output audit
 │
+├── workflows/
+│   └── deep-research.js         # Deterministic orchestration workflow (all loop logic lives here)
+│
 └── skills/
     └── deep-research/
-        ├── SKILL.md                        # 9-phase orchestration loop
+        ├── SKILL.md                        # Thin invoker — extracts query, calls the workflow
         ├── assets/
         │   └── report-template.html        # Interactive HTML template
         └── references/
-            ├── orchestration-loop.md       # Loop mechanics, caps, edge cases
+            ├── orchestration-loop.md       # Loop mechanics, caps, decision trees
             ├── critic-rubric.md            # Scoring criteria
             ├── citation-format.md          # Citation rules (markdown + HTML)
             └── html-claim-format.md        # <claim> tag schema
