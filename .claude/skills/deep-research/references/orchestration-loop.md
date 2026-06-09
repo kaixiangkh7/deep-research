@@ -1,124 +1,132 @@
 # Orchestration Loop Reference
 
-Detailed mechanics for the `deep-research` skill's multi-agent coordination loop. The SKILL.md has the phase summary; this file has the edge cases, caps, and decision trees.
+Loop mechanics for the `deep-research` workflow. The orchestration lives in
+`.claude/workflows/deep-research.js` as deterministic JavaScript — not a prompt asking the LLM
+to follow phase instructions. This file documents the control flow, caps, and decision trees.
 
 ---
 
 ## Full loop diagram
 
 ```
-User query
+User query (passed as args.query)
     │
     ▼
-[Phase 0] Intent triage ──QUICK_ANSWER──► Answer directly
+[Triage agent] ──QUICK_ANSWER──► single researcher → inline answer → return
     │ DEEP_RESEARCH
     ▼
-[Phase 1] Clarify (optional HITL)
+[Plan agent] — decompose into sub-questions tagged local/web
     │
     ▼
-[Phase 2] Plan: decompose into sub-questions, tag local/web
+[Plan Review] — research-critic in plan-review mode
     │
+    ├──min≥4 & no critical risks──► proceed
+    │
+    └──min<4 or critical risks──► plan revision agent ──► proceed regardless
+    │                              (one revision; never loops)
     ▼
-[Phase 3] Plan review (research-critic: plan-review mode)
+[Research while-loop] — researchRound < MAX_RESEARCH_ROUNDS(3)
     │
-    ├──min≥4 & no risks──► proceed
-    │
-    └──min<4 or risks──► revise plan once ──► re-review ──► proceed regardless
-    │
-    ▼
-[Phase 4] Parallel dispatch (all workers in one message)
+    │  parallel() — all activeSubquestions dispatched concurrently
     │         ├── document-researcher (local sub-questions)
     │         └── web-researcher      (web sub-questions)
-    ▼
-[Phase 5] Gap evaluation
     │
-    ├──sufficient──► proceed to synthesis
+    ├──gaps < 2 OR round cap hit──► exit research loop
     │
-    └──gaps found──► targeted re-plan ──► Phase 4 again
-                     (max 3 rounds total; after cap → proceed)
+    └──gaps ≥ 2 AND rounds remain──► gap-plan agent ──► loop again
     │
     ▼
-[Phase 6] Synthesize: write grounded report with all accumulated findings
+[Synthesis agent] — HTML body with <claim> tags
     │
     ▼
-[Phase 7] Output audit (research-critic: output-audit mode)
+[Audit/Arbitrate while-loop] — incrementalCycles < MAX_INCREMENTAL(3)
+    │
+    │  [Audit] — research-critic in output-audit mode
+    │  [Arbitrate] — orchestrator agent decides verdict
+    │
+    ├──APPROVED──────────────────────────────────────────── break → deliver
+    │
+    ├──DEBATE ──► debateRounds < MAX_DEBATE(2)?
+    │    YES ──► append counter-argument to debateHistory ──► continue (re-audit)
+    │    NO  ──► force APPROVED ──► break → deliver
+    │
+    ├──INCREMENTAL ──► gap-fill parallel() ──► re-synthesis ──► continue
+    │                  incrementalCycles++
+    │
+    ├──REJECTED ──► break inner loop
+    │               rejectedCycles++ < MAX_REJECTED(3)?
+    │                 YES ──► reset allFindings, re-plan ──► outer loop continues
+    │                 NO  ──► deliver best available
+    │
+    └──NEEDS_CLARIFICATION ──► break → deliver best available
     │
     ▼
-[Phase 8] Arbitrate
-    │
-    ├──APPROVED──────────────────────────────────────────────► deliver
-    │
-    ├──INCREMENTAL──► targeted Phase 4–6 for gap ──► merge ──► re-arbitrate
-    │                 (max 3 INCREMENTAL cycles total)
-    │
-    ├──REJECTED──► restart from Phase 2 with revised plan
-    │              (max 3 REJECTED cycles total; after cap → APPROVED)
-    │
-    ├──DEBATE──► re-submit to critic with counter-argument
-    │             ──► critic replies ──► re-arbitrate
-    │             (max 2 debate rounds; after cap → APPROVED)
-    │
-    └──NEEDS-CLARIFICATION──► AskUserQuestion ──► resume from Phase 2
-    │
-    ▼
-[Phase 9] Deliver final grounded report
+[Deliver agent] — reads template, substitutes placeholders, writes HTML file
 ```
 
 ---
 
-## Round caps (hard limits)
+## Round caps (hard limits — enforced by JS constants)
 
-| Loop | Cap | What happens at cap |
+| Constant | Value | What happens at cap |
 |---|---|---|
-| Research rounds (Phases 4–5) | 3 total | After round 3, proceed to synthesis with whatever was gathered |
-| INCREMENTAL cycles (Phase 8) | 3 total | After 3, deliver current report |
-| REJECTED restarts (Phase 8) | 3 total | After 3, deliver best available report with caveats |
-| DEBATE rounds (Phase 8) | 2 total | After 2, force APPROVED and deliver |
-| Plan revision cycles (Phase 3) | 1 total | After 1 revision, proceed regardless of score |
+| `MAX_RESEARCH_ROUNDS` | 3 | Exit research loop; synthesize with whatever was gathered |
+| `MAX_INCREMENTAL` | 3 | Exit audit loop; treat as APPROVED, deliver best synthesis |
+| `MAX_REJECTED` | 3 | Exit outer loop; deliver best available with log note |
+| `MAX_DEBATE` | 2 | Force `finalVerdict = 'APPROVED'`; break and deliver |
 
-These caps prevent infinite loops. When a cap is hit, always notify the user:
-> "Reached maximum [X] rounds. Delivering best available findings."
+These are `const` declarations at the top of `workflows/deep-research.js`. To change a cap, edit that file.
 
 ---
 
-## Parallelism rules
+## Parallelism
 
-**Do in one message (concurrent)** using the Agent tool (formerly Task — both work):
-- All initial worker dispatches (Phase 4)
-- Follow-up gap-fill dispatches (Phase 5)
+`parallel()` is called in two places — both dispatch workers concurrently:
 
-**Must be sequential:**
-- Plan review THEN dispatch (critic needs the plan to review)
-- Dispatch THEN synthesis (synthesis needs worker results)
-- Synthesis THEN output audit (audit needs the synthesized report)
+```javascript
+// Research rounds — all sub-questions fire at once
+const roundFindings = await parallel(
+  activeSubquestions.map(sq => () => agent(workerPrompt(sq), { agentType: ... }))
+)
 
-**Never concurrent with each other:**
+// INCREMENTAL gap-fill — gap sub-questions fire at once
+const gapFindings = await parallel(
+  arbitration.gapSubquestions.map(sq => () => agent(workerPrompt(sq), { agentType: ... }))
+)
+```
+
+**Sequential (never concurrent):**
+- Plan Review → Research (critic needs the plan)
+- Research → Synthesis (synthesis needs all findings)
+- Synthesis → Audit (audit needs the synthesized report)
+
+**Never in the same `parallel()` call:**
 - Two critic calls
-- A critic call and a researcher call in the same batch
+- A critic call and a researcher call
 
 ---
 
-## Incremental vs. Rejected decision tree
+## INCREMENTAL vs. REJECTED decision tree
 
 ```
-Critic flags: "has_ungrounded_claims: Yes"
+Critic flags hasUngroundedClaims: true
     │
-    ├── Are the flagged claims isolated (1–2 specific facts)?
-    │       YES → INCREMENTAL: targeted re-research for those facts only
-    │       NO  → REJECTED: fundamental problem, full restart
+    ├── Isolated (1–2 claims)?
+    │       YES → INCREMENTAL: arbitration.gapSubquestions targets those facts only
+    │       NO  → REJECTED: fundamental problem, full plan restart
     │
-    └── Is the critic correct? (Check your own sources)
-            NO  → DEBATE: cite evidence for why the claim IS grounded
-            YES → accept INCREMENTAL or REJECTED as appropriate
+    └── Is the critic actually correct?
+            NO  → DEBATE: arbitration.counterArgument cites evidence claim IS grounded
+            YES → INCREMENTAL or REJECTED by severity
 
-Critic flags: "does_answer_query: No"
+Critic flags answersQuery: "no" or "partially"
     │
-    ├── Is it a scope gap (missing sub-topic)?
-    │       YES → INCREMENTAL: targeted re-research for missing scope
+    ├── Scope gap (missing sub-topic)?
+    │       YES → INCREMENTAL: target the missing scope
     │       NO  → REJECTED: wrong approach entirely
     │
     └── Is the required source accessible?
-            NO  → NEEDS-CLARIFICATION: ask user for the source
+            NO  → NEEDS_CLARIFICATION: surface to user, deliver best available
             YES → INCREMENTAL or REJECTED depending on severity
 ```
 
@@ -126,62 +134,50 @@ Critic flags: "does_answer_query: No"
 
 ## INCREMENTAL mode mechanics
 
-When arbitration verdict is INCREMENTAL:
-1. Identify **exactly** which facts are missing (from critic's `consultant_opinion`).
-2. Create a mini-plan covering only those gaps (1–3 sub-questions).
-3. Dispatch only the workers needed for those sub-questions.
-4. Merge the new findings with **all previously accumulated findings**.
-5. Re-synthesize the full report (do NOT discard previous findings).
-6. Skip re-auditing (to avoid INCREMENTAL loops). Deliver directly.
-
-Exception: if the merged report introduces new concerns, do one final audit.
+When `arbitration.verdict === 'INCREMENTAL'`:
+1. `arbitration.gapSubquestions` lists 1–3 targeted sub-questions.
+2. `parallel()` dispatches only those sub-questions.
+3. New findings are pushed into `allFindings` (existing findings are never discarded).
+4. A re-synthesis agent rewrites the full report from all accumulated findings.
+5. The loop continues — the next iteration audits the re-synthesized report.
+6. `incrementalCycles` increments; at `MAX_INCREMENTAL` the inner loop exits and the best synthesis is delivered.
 
 ---
 
 ## DEBATE mode mechanics
 
-When you disagree with the critic's finding:
-1. State your counter-argument explicitly with evidence:
-   > "The critic flagged claim X as ungrounded, but [file.md:42] contains the exact quote 'Y'. The citation is valid."
-2. Re-submit to `research-critic` in output-audit mode with your debate history appended:
-   > MODE: output-audit  
-   > DEBATE ROUND: 1  
-   > LEAD'S COUNTER-ARGUMENT: <your argument>  
-   > ORIGINAL REPORT: <report>
-3. The critic reviews again in light of your argument.
-4. After 2 debate rounds, force APPROVED regardless of outcome and deliver.
+When `arbitration.verdict === 'DEBATE'`:
+1. `arbitration.counterArgument` contains the lead researcher's evidence.
+2. The counter-argument is appended to `debateHistory[]`.
+3. The next audit pass receives `debateHistory` prepended to the audit prompt.
+4. The critic audits again with the counter-argument in view.
+5. After `MAX_DEBATE` rounds, `finalVerdict` is forced to `'APPROVED'` regardless.
 
 ---
 
 ## QUICK_ANSWER path
 
-For simple queries that do not need the full loop:
-1. Determine if local files or web is most likely to have the answer.
-2. Dispatch one worker (or answer directly from context if trivial).
-3. Deliver with inline citation.
-4. No critic, no plan, no loop.
+The triage agent classifies the query. If `type === 'QUICK_ANSWER'`:
+1. A single general agent answers directly (local or web as appropriate).
+2. No plan, no critic, no loop, no HTML file.
+3. The workflow returns `{ type: 'QUICK_ANSWER', answer }` immediately.
 
-Threshold for QUICK_ANSWER:
-- Single factual lookup (a function signature, a config value, a definition)
-- Answer is likely in one place
-- No comparison, synthesis, or multi-source corroboration needed
-
-When in doubt, run the full loop. False positives (running the full loop on a simple question) waste tokens but never produce wrong answers. False negatives (skipping the loop on a complex question) may produce uncited claims.
+Threshold: single factual lookup, likely in one place, no comparison or synthesis needed.
+When in doubt, the triage agent should choose `DEEP_RESEARCH`.
 
 ---
 
-## State to track across phases
+## State tracking
 
-Use `TodoWrite` to maintain visible state:
+Progress is emitted via `phase()` and `log()` calls in the workflow — visible in `/workflows`:
 
-```
-[ ] Plan: <strategy summary>
-[ ] Plan review: <min score / risks>
-[ ] Research round 1: <sub-questions dispatched>
-[ ] Research round 2 (if needed): <gap sub-questions>
-[ ] Synthesis: <in progress>
-[ ] Output audit: <critic findings>
-[ ] Arbitration: <verdict>
-```
-
-Mark each item complete as you finish it. This gives the user visibility into where the loop is at any point.
+| Call | When |
+|---|---|
+| `phase('Triage')` | Start of query classification |
+| `phase('Plan')` | Plan decomposition begins |
+| `phase('Plan Review')` | Critic review starts |
+| `phase('Research')` | Each research round (called again for each round) |
+| `phase('Synthesize')` | Each synthesis pass |
+| `phase('Audit')` | Each critic audit |
+| `phase('Deliver')` | HTML rendering and file write |
+| `log(message)` | Round counts, verdicts, gap counts, cap notifications |
