@@ -24,7 +24,7 @@ Workflow({
 3. When the workflow completes, print a terminal summary:
    - **Direct answer** — from `result.directAnswer`
    - **Key findings** — `result.keyFindings` as a bullet list
-   - `📄 Report saved → deep-research-report.html`
+   - `📄 Report saved → {result.reportPath}` (unique per session; format: `deep-research-<date>-<slug>.html`)
    - If any sub-questions were unanswerable, note them here.
 
 ## QUICK_ANSWER exception

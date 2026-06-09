@@ -22,6 +22,14 @@ if (!query) {
   return { error: 'No query provided' }
 }
 
+// Derive a filesystem-safe slug: lowercase, keep alphanumeric + hyphens, collapse runs
+const slug = query
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-+|-+$/g, '')
+  .slice(0, 60)
+const reportPath = `./deep-research-${today}-${slug}.html`
+
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
 const TRIAGE_SCHEMA = {
@@ -511,19 +519,19 @@ Steps:
    <!--REPORT_TITLE-->  →  ${bestSynthesis.title}
    <!--REPORT_META-->   →  <span>📅 ${today}</span><span>📄 ${bestSynthesis.localSourceCount} local source(s)</span><span>🌐 ${bestSynthesis.webSourceCount} web source(s)</span>
    <!--REPORT_BODY-->   →  (the REPORT BODY below, verbatim)
-3. Write the full substituted HTML to: ./deep-research-report.html
+3. Write the full substituted HTML to: ${reportPath}
 
 REPORT BODY:
 ${bestSynthesis.reportBody}`,
   { label: 'render-html', phase: 'Deliver' }
 )
 
-log('Report written → ./deep-research-report.html')
+log(`Report written → ${reportPath}`)
 
 return {
   type:         'DEEP_RESEARCH',
   query,
-  reportPath:   './deep-research-report.html',
+  reportPath,
   directAnswer: bestSynthesis.directAnswer,
   keyFindings:  bestSynthesis.keyFindings,
   localSources: bestSynthesis.localSourceCount,
