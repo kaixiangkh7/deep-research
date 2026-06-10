@@ -6,6 +6,17 @@ No extra API keys, no external services. Drop the `.claude/` folder into any pro
 
 ---
 
+## Branches
+
+| Branch | Approach | Best for |
+|---|---|---|
+| `master` | Claude Code orchestrates subagents directly via the Agent SDK | Anyone using Claude Code or the web/desktop app |
+| [`dynamic-workflow`](https://github.com/kaixiangkh7/deep-research/tree/dynamic-workflow) | Deterministic flow using the new Dynamic Workflow harness | Claude Code CLI users who want explicit, reproducible orchestration |
+
+Use `master` if you want Claude Code to orchestrate subagents directly. Switch to the `dynamic-workflow` branch if you're on the Claude Code CLI and want a deterministic execution flow powered by the Dynamic Workflow engine.
+
+---
+
 ## What you get
 
 Ask a question. Get this:
